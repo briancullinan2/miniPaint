@@ -19,6 +19,7 @@ class GUI_menu_class {
 		this.menuBarNode = null;
 		this.lastFocusedMenuBarLink = 0;
 		this.dropdownStack = [];
+		this.menuDefinition = menuDefinition;
 
 		this.Tools_translate = new Tools_translate_class();
 	}
