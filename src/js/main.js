@@ -25,17 +25,27 @@ import File_open_class from './modules/file/open.js';
 import File_save_class from './modules/file/save.js';
 import * as Actions from './actions/index.js';
 
-window.addEventListener('load', function (e) {
-	// Initiate app
-	var Layers = new Base_layers_class();
-	var Base_tools = new Base_tools_class(true);
-	var GUI = new Base_gui_class();
-	var Base_state = new Base_state_class();
-	var File_open = new File_open_class();
-	var File_save = new File_save_class();
-	var Base_search = new Base_search_class();
+/**
+ * Core application initialization sequence.
+ * Can be invoked immediately by a layout manager or deferred to a window event listener.
+ * @param {HTMLElement} [targetNode] - Optional custom DOM mount point inside a Lumino Widget container
+ */
+export function initializeMiniPaint(targetNode = null) {
 
-	// Register singletons in app module
+	let Layers = new Base_layers_class();
+	let Base_tools = new Base_tools_class(true);
+	let GUI = new Base_gui_class();
+	let Base_state = new Base_state_class();
+	let File_open = new File_open_class();
+	let File_save = new File_save_class();
+	let Base_search = new Base_search_class();
+
+	// If a custom target container element is supplied, pass its reference over to miniPaint's GUI layout generator
+	if (targetNode) {
+		config.TARGET_ELEMENT = targetNode; // Ensure miniPaint appends its canvas workspace here
+	}
+
+	// Register singletons in app module context boundaries
 	app.Actions = Actions;
 	app.Config = config;
 	app.FileOpen = File_open;
@@ -45,14 +55,22 @@ window.addEventListener('load', function (e) {
 	app.State = Base_state;
 	app.Tools = Base_tools;
 
-	// Register as global for quick or external access
-	window.Layers = Layers;
-	window.AppConfig = config;
-	window.State = Base_state;
-	window.FileOpen = File_open;
-	window.FileSave = File_save;
-
-	// Render all
+	// Render operations
 	GUI.init();
 	Layers.init();
-}, false);
+
+	return app;
+}
+
+// ENVIRONMENT CHECK: Determine fallback routine execution paths
+const isLuminoEnvironment = window.Lumino  || document.readyState === 'complete';
+
+if (isLuminoEnvironment) {
+	// If we're already embedded or window has loaded, bypass event listeners completely
+	console.log("Lumino context or late bundle load detected. Initializing painter pipeline instantly.");
+	window.initializeMiniPaint = initializeMiniPaint;
+} else {
+	// Standalone fallback pathway
+	window.addEventListener('load', () => initializeMiniPaint(), false);
+}
+

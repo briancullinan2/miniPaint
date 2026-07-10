@@ -43,7 +43,7 @@ class Base_gui_class {
 		//if grid is visible
 		this.grid = false;
 
-		this.canvas_offset = {x: 0, y: 0};
+		this.canvas_offset = { x: 0, y: 0 };
 
 		//common image dimensions
 		this.common_dimensions = [
@@ -101,7 +101,7 @@ class Base_gui_class {
 		else {
 			config.TRANSPARENCY = false;
 		}
-		
+
 		//transparency_type
 		var transparency_type = this.Helper.getCookie('transparency_type');
 		if (transparency_type === null) {
@@ -118,7 +118,7 @@ class Base_gui_class {
 			//default
 			config.SNAP = true;
 		}
-		else{
+		else {
 			config.SNAP = Boolean(snap_cookie);
 		}
 
@@ -128,7 +128,7 @@ class Base_gui_class {
 			//default
 			config.guides_enabled = true;
 		}
-		else{
+		else {
 			config.guides_enabled = Boolean(guides_cookie);
 		}
 	}
@@ -200,10 +200,10 @@ class Base_gui_class {
 			});
 		}
 
-		document.getElementById('left_mobile_menu_button').addEventListener('click', function (event) {
+		document.getElementById('left_mobile_menu_button')?.addEventListener('click', function (event) {
 			document.querySelector('.sidebar_left').classList.toggle('active');
 		});
-		document.getElementById('mobile_menu_button').addEventListener('click', function (event) {
+		document.getElementById('mobile_menu_button')?.addEventListener('click', function (event) {
 			document.querySelector('.sidebar_right').classList.toggle('active');
 		});
 		window.addEventListener('resize', function (event) {
@@ -216,7 +216,7 @@ class Base_gui_class {
 		//confirmation on exit
 		var exit_confirm = this.Tools_settings.get_setting('exit_confirm');
 		window.addEventListener('beforeunload', function (e) {
-			if(exit_confirm && (config.layers.length > 1 || _this.Base_layers.is_layer_empty(config.layer.id) == false)){
+			if (exit_confirm && (config.layers.length > 1 || _this.Base_layers.is_layer_empty(config.layer.id) == false)) {
 				e.preventDefault();
 				e.returnValue = '';
 			}
@@ -253,10 +253,10 @@ class Base_gui_class {
 		config.visible_width = w;
 		config.visible_height = h;
 
-		if(config.ZOOM >= 1) {
+		if (config.ZOOM >= 1) {
 			ctx.imageSmoothingEnabled = false;
 		}
-		else{
+		else {
 			ctx.imageSmoothingEnabled = true;
 		}
 
@@ -286,13 +286,13 @@ class Base_gui_class {
 
 	load_translations() {
 		var lang = this.Helper.getCookie('language');
-		
+
 		//load from params
 		var params = this.Helper.get_url_parameters();
-		if(params.lang != undefined){
+		if (params.lang != undefined) {
 			lang = params.lang.replace(/([^a-z]+)/gi, '');
 		}
-		
+
 		if (lang != null && lang != config.LANG) {
 			config.LANG = lang.replace(/([^a-z]+)/gi, '');
 			this.Tools_translate.translate(config.LANG);
@@ -335,7 +335,7 @@ class Base_gui_class {
 			target.className = 'transparent-grid white';
 			return false;
 		}
-		else{
+		else {
 			target.className = 'transparent-grid ' + config.TRANSPARENCY_TYPE;
 		}
 		target.style.backgroundSize = (gap * 2) + 'px auto';
@@ -400,13 +400,13 @@ class Base_gui_class {
 		}
 	}
 
-	draw_guides(ctx){
-		if(config.guides_enabled == false){
+	draw_guides(ctx) {
+		if (config.guides_enabled == false) {
 			return;
 		}
 		var thick_guides = this.Tools_settings.get_setting('thick_guides');
 
-		for(var i in config.guides) {
+		for (var i in config.guides) {
 			var guide = config.guides[i];
 
 			if (guide.x === 0 || guide.y === 0) {
@@ -415,7 +415,7 @@ class Base_gui_class {
 
 			//set styles
 			ctx.strokeStyle = '#00b8b8';
-			if(thick_guides == false)
+			if (thick_guides == false)
 				ctx.lineWidth = 1;
 			else
 				ctx.lineWidth = 3;
@@ -434,7 +434,7 @@ class Base_gui_class {
 			ctx.stroke();
 		}
 	}
-	
+
 	/**
 	 * change draw area size
 	 * 
@@ -446,7 +446,7 @@ class Base_gui_class {
 		config.HEIGHT = parseInt(height);
 		this.prepare_canvas();
 	}
-	
+
 	/**
 	 * 
 	 * @returns {object} keys: width, height
@@ -455,11 +455,11 @@ class Base_gui_class {
 		var wrapper = document.getElementById('main_wrapper');
 		var page_w = wrapper.clientWidth;
 		var page_h = wrapper.clientHeight;
-		
+
 		//find visible size in pixels, but make sure its correct even if image smaller then screen
 		var w = Math.min(Math.ceil(config.WIDTH * config.ZOOM), Math.ceil(page_w / config.ZOOM));
 		var h = Math.min(Math.ceil(config.HEIGHT * config.ZOOM), Math.ceil(page_h / config.ZOOM));
-		
+
 		return {
 			width: w,
 			height: h,
@@ -471,8 +471,8 @@ class Base_gui_class {
 	 * 
 	 * @param {string} theme_name
 	 */
-	change_theme(theme_name = null){
-		if(theme_name == null){
+	change_theme(theme_name = null) {
+		if (theme_name == null) {
 			//auto detect
 			var theme_cookie = this.Helper.getCookie('theme');
 			if (theme_cookie) {
@@ -483,7 +483,7 @@ class Base_gui_class {
 			}
 		}
 
-		for(var i in config.themes){
+		for (var i in config.themes) {
 			document.querySelector('body').classList.remove('theme-' + config.themes[i]);
 		}
 		document.querySelector('body').classList.add('theme-' + theme_name);

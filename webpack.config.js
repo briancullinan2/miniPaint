@@ -1,14 +1,17 @@
 var webpack = require('webpack');
 var path = require('path');
+const source = path.resolve(__dirname, "src");
 
 module.exports = {
 	entry: [
-		'./src/js/main.js',
+		source + '/js/main.js',
 	],
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'bundle.js',
-		publicPath: '/dist/'
+		publicPath: '/dist/',
+		libraryTarget: 'umd',
+		library: 'Paint'
 	},
 	resolve: {
 		extensions: ['.js', '.css'],
@@ -24,7 +27,7 @@ module.exports = {
 					'style-loader',
 					{
 						loader: 'css-loader',
-						options: {url: false}
+						options: { url: false }
 					}
 				]
 			},
@@ -37,9 +40,9 @@ module.exports = {
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery"
+			$: "jquery",
+			jQuery: "jquery",
+			"window.jQuery": "jquery"
 		}),
 		new webpack.DefinePlugin({
 			VERSION: JSON.stringify(require("./package.json").version)
