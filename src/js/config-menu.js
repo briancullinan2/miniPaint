@@ -764,5 +764,6 @@ const menuDefinition = [
 	}
 ];
 
+window.menuDefinition = menuDefinition;
 
 export default menuDefinition;

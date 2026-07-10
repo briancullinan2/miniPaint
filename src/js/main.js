@@ -24,6 +24,7 @@ import Base_search_class from './core/base-search.js';
 import File_open_class from './modules/file/open.js';
 import File_save_class from './modules/file/save.js';
 import * as Actions from './actions/index.js';
+import menuDefinition from './config-menu.js';
 
 /**
  * Core application initialization sequence.
@@ -54,6 +55,7 @@ export function initializeMiniPaint(targetNode = null) {
 	app.Layers = Layers;
 	app.State = Base_state;
 	app.Tools = Base_tools;
+	app.menuDefinition = menuDefinition;
 
 	// Render operations
 	GUI.init();
@@ -63,7 +65,7 @@ export function initializeMiniPaint(targetNode = null) {
 }
 
 // ENVIRONMENT CHECK: Determine fallback routine execution paths
-const isLuminoEnvironment = window.Lumino  || document.readyState === 'complete';
+const isLuminoEnvironment = window.Lumino || document.readyState === 'complete';
 
 if (isLuminoEnvironment) {
 	// If we're already embedded or window has loaded, bypass event listeners completely
