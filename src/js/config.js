@@ -149,21 +149,21 @@ config.TOOLS = [
 	},
 	{
 		name: 'line',
-		visible: false,
+		visible: true,
 		attributes: {
 			size: 4,
 		},
 	},
 	{
 		name: 'arrow',
-		visible: false,
+		visible: true,
 		attributes: {
 			size: 4,
 		},
 	},
 	{
 		name: 'rectangle',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -179,7 +179,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'ellipse',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -199,7 +199,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'triangle',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -210,7 +210,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'right_triangle',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -221,7 +221,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'romb',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -232,7 +232,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'parallelogram',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -243,7 +243,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'trapezoid',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -254,7 +254,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'plus',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -265,7 +265,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'pentagon',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -276,7 +276,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'hexagon',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -287,7 +287,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'star',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			corners: 5,
@@ -300,7 +300,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'heart',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -311,7 +311,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'cylinder',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -322,7 +322,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'human',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			fill: true,
@@ -332,7 +332,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'tear',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -343,21 +343,21 @@ config.TOOLS = [
 	},
 	{
 		name: 'cog',
-		visible: false,
+		visible: true,
 		attributes: {
 			fill_color: '#555555',
 		},
 	},
 	{
 		name: 'bezier_curve',
-		visible: false,
+		visible: true,
 		attributes: {
 			size: 4,
 		},
 	},
 	{
 		name: 'moon',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -368,7 +368,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'callout',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
@@ -496,7 +496,7 @@ config.TOOLS = [
 	},
 	{
 		name: 'polygon',
-		visible: false,
+		visible: true,
 		attributes: {
 			border_size: 4,
 			border: true,
