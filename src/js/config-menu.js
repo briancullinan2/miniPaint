@@ -193,6 +193,7 @@ const menuDefinition = [
 			},
 			{
 				name: 'Full Screen',
+				shortcut: 'F12',
 				target: 'view/full_screen.fs'
 			}
 		]

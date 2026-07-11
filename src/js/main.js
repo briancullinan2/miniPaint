@@ -25,6 +25,7 @@ import File_open_class from './modules/file/open.js';
 import File_save_class from './modules/file/save.js';
 import * as Actions from './actions/index.js';
 import menuDefinition from './config-menu.js';
+import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
 
 /**
  * Core application initialization sequence.
@@ -56,6 +57,7 @@ export function initializeMiniPaint(targetNode = null) {
 	app.State = Base_state;
 	app.Tools = Base_tools;
 	app.menuDefinition = menuDefinition;
+	app.alertify = alertify;
 
 	// Render operations
 	GUI.init();
