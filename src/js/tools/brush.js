@@ -2,6 +2,7 @@ import app from './../app.js';
 import config from './../config.js';
 import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
+import { GlobalEvents } from '../global-events.js';
 
 class Brush_class extends Base_tools_class {
 
@@ -24,39 +25,39 @@ class Brush_class extends Base_tools_class {
 		var is_touch = false;
 
 		//pointer events
-		document.addEventListener('pointerdown', function (event) {
+		GlobalEvents.register(app.Events, document, 'pointerdown', function (event) {
 			_this.pointerdown(event);
 		});
-		document.addEventListener('pointermove', function (event) {
+		GlobalEvents.register(app.Events, document, 'pointermove', function (event) {
 			_this.pointermove(event);
 		});
 
 		//mouse events
-		document.addEventListener('mousedown', function (event) {
-			if(is_touch)
+		GlobalEvents.register(app.Events, document, 'mousedown', function (event) {
+			if (is_touch)
 				return;
 			_this.dragStart(event);
 		});
-		document.addEventListener('mousemove', function (event) {
-			if(is_touch)
+		GlobalEvents.register(app.Events, document, 'mousemove', function (event) {
+			if (is_touch)
 				return;
 			_this.dragMove(event);
 		});
-		document.addEventListener('mouseup', function (event) {
-			if(is_touch)
+		GlobalEvents.register(app.Events, document, 'mouseup', function (event) {
+			if (is_touch)
 				return;
 			_this.dragEnd(event);
 		});
 
 		// collect touch events
-		document.addEventListener('touchstart', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchstart', function (event) {
 			is_touch = true;
 			_this.dragStart(event);
 		});
-		document.addEventListener('touchmove', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchmove', function (event) {
 			_this.dragMove(event);
 		});
-		document.addEventListener('touchend', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchend', function (event) {
 			_this.dragEnd(event);
 		});
 	}
@@ -97,12 +98,12 @@ class Brush_class extends Base_tools_class {
 		if (event.changedTouches) {
 			events = event.changedTouches;
 		}
-		else{
+		else {
 			events.push(event);
 		}
-		for(var i = 0; i < events.length; i++){
+		for (var i = 0; i < events.length; i++) {
 			var identifier = null;
-			if(typeof events[i].identifier != "undefined") {
+			if (typeof events[i].identifier != "undefined") {
 				identifier = events[i].identifier;
 			}
 
@@ -140,17 +141,17 @@ class Brush_class extends Base_tools_class {
 		if (event.changedTouches) {
 			events = event.changedTouches;
 		}
-		else{
+		else {
 			events.push(event);
 		}
-		for(var i = 0; i < events.length; i++){
+		for (var i = 0; i < events.length; i++) {
 			var identifier = null;
-			if(typeof events[i].identifier != "undefined") {
+			if (typeof events[i].identifier != "undefined") {
 				identifier = events[i].identifier;
 			}
 
-			for(var j = 0; i < this.event_links.length; j++){
-				if(this.event_links[j].identifier == identifier){
+			for (var j = 0; i < this.event_links.length; j++) {
+				if (this.event_links[j].identifier == identifier) {
 					//found link
 					_this.mousemove_action(events[i], this.event_links[j].index);
 					break;
@@ -173,18 +174,18 @@ class Brush_class extends Base_tools_class {
 		if (event.changedTouches) {
 			events = event.changedTouches;
 		}
-		else{
+		else {
 			events.push(event);
 		}
-		for(var i = 0; i < events.length; i++){
+		for (var i = 0; i < events.length; i++) {
 			var identifier = null;
-			if(typeof events[i].identifier != "undefined") {
+			if (typeof events[i].identifier != "undefined") {
 				//unlink
 				identifier = events[i].identifier;
 			}
 
-			for(var j = 0; i < this.event_links.length; j++){
-				if(this.event_links[j].identifier == identifier){
+			for (var j = 0; i < this.event_links.length; j++) {
+				if (this.event_links[j].identifier == identifier) {
 					this.event_links.splice(j, 1);
 					break;
 				}
@@ -247,8 +248,8 @@ class Brush_class extends Base_tools_class {
 		}
 
 		//in case of undo, recalculate index
-		for(var i = index; i >= 0; i++){
-			if(typeof config.layer.data[index] != "undefined"){
+		for (var i = index; i >= 0; i++) {
+			if (typeof config.layer.data[index] != "undefined") {
 				break;
 			}
 			index--;
@@ -289,8 +290,8 @@ class Brush_class extends Base_tools_class {
 		}
 
 		//in case of undo, recalculate index
-		for(var i = index; i >= 0; i++){
-			if(typeof config.layer.data[index] != "undefined"){
+		for (var i = index; i >= 0; i++) {
+			if (typeof config.layer.data[index] != "undefined") {
 				break;
 			}
 			index--;
@@ -451,28 +452,28 @@ class Brush_class extends Base_tools_class {
 		//prepare
 		var temp_data1 = [data[0]];
 		var c, d;
-		for (var i = 1; i < data.length - 1;  i = i+1) {
+		for (var i = 1; i < data.length - 1; i = i + 1) {
 			c = (data[i][0] + data[i + 1][0]) / 2;
 			d = (data[i][1] + data[i + 1][1]) / 2;
 			temp_data1.push([c, d]);
 		}
 
 		var temp_data2 = [temp_data1[0]];
-		for (var i = 1; i < temp_data1.length - 1;  i = i+1) {
+		for (var i = 1; i < temp_data1.length - 1; i = i + 1) {
 			c = (temp_data1[i][0] + temp_data1[i + 1][0]) / 2;
 			d = (temp_data1[i][1] + temp_data1[i + 1][1]) / 2;
 			temp_data2.push([c, d]);
 		}
 
 		var temp_data = [temp_data2[0]];
-		for (var i = 1; i < temp_data2.length - 1;  i = i+1) {
+		for (var i = 1; i < temp_data2.length - 1; i = i + 1) {
 			c = (temp_data2[i][0] + temp_data2[i + 1][0]) / 2;
 			d = (temp_data2[i][1] + temp_data2[i + 1][1]) / 2;
 			temp_data.push([c, d]);
 		}
 
 		//draw
-		for (var i = 1; i < temp_data.length - 2;  i = i+1) {
+		for (var i = 1; i < temp_data.length - 2; i = i + 1) {
 			c = (temp_data[i][0] + temp_data[i + 1][0]) / 2;
 			d = (temp_data[i][1] + temp_data[i + 1][1]) / 2;
 			ctx.quadraticCurveTo(temp_data[i][0], temp_data[i][1], c, d);
@@ -482,22 +483,22 @@ class Brush_class extends Base_tools_class {
 		ctx.quadraticCurveTo(
 			temp_data[i][0],
 			temp_data[i][1],
-			temp_data[i+1][0],
-			temp_data[i+1][1]
+			temp_data[i + 1][0],
+			temp_data[i + 1][1]
 		);
 		ctx.stroke();
 	}
 
 	check_legacy_format(data) {
 		//check for legacy format
-		if(data.length > 0 && typeof data[0][0] == "number"){
+		if (data.length > 0 && typeof data[0][0] == "number") {
 			//convert
 			var legacy = JSON.parse(JSON.stringify(data));
 			data = [];
 			data.push([]);
 			var group_index = 0;
-			for(var i in legacy){
-				if(legacy[i] === null){
+			for (var i in legacy) {
+				if (legacy[i] === null) {
 					data.push([]);
 					group_index++;
 				}
@@ -517,7 +518,7 @@ class Brush_class extends Base_tools_class {
 		var data = JSON.parse(JSON.stringify(config.layer.data)); // Deep copy for history
 		this.check_legacy_format(data);
 
-		if(config.layer.data.length == 0 || data[0].length == 0)
+		if (config.layer.data.length == 0 || data[0].length == 0)
 			return;
 
 		//find bounds

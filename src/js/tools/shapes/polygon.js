@@ -3,6 +3,7 @@ import config from './../../config.js';
 import Base_tools_class from './../../core/base-tools.js';
 import Base_layers_class from './../../core/base-layers.js';
 import Helper_class from './../../libs/helpers.js';
+import { GlobalEvents } from '../../global-events.js';
 
 class Polygon_class extends Base_tools_class {
 
@@ -14,7 +15,7 @@ class Polygon_class extends Base_tools_class {
 		this.name = 'polygon';
 		this.layer = {};
 		this.best_ratio = 1;
-		this.snap_line_info = {x: null, y: null};
+		this.snap_line_info = { x: null, y: null };
 		this.params_hash = false;
 		this.selected_obj_positions = {};
 		this.mouse_lock = null;
@@ -27,7 +28,7 @@ class Polygon_class extends Base_tools_class {
 	load() {
 		var _this = this;
 		this.default_events();
-		document.addEventListener('keydown', function (event) {
+		GlobalEvents.register(app.Events, document, 'keydown', function (event) {
 			var code = event.code;
 			if (config.TOOL.name == _this.name && code == "Escape") {
 				//escape
@@ -40,24 +41,24 @@ class Polygon_class extends Base_tools_class {
 	 * events for handling helping lines only
 	 */
 	events() {
-		document.addEventListener('mousedown', (e) => {
+		GlobalEvents.register(app.Events, document, 'mousedown', (e) => {
 			this.selected_object_actions(e);
 		});
-		document.addEventListener('mousemove', (e) => {
+		GlobalEvents.register(app.Events, document, 'mousemove', (e) => {
 			this.selected_object_actions(e);
 		});
-		document.addEventListener('mouseup', (e) => {
+		GlobalEvents.register(app.Events, document, 'mouseup', (e) => {
 			this.selected_object_actions(e);
 		});
 
 		// touch
-		document.addEventListener('touchstart', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchstart', (event) => {
 			this.selected_object_actions(event);
 		});
-		document.addEventListener('touchmove', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchmove', (event) => {
 			this.selected_object_actions(event);
-		}, {passive: false});
-		document.addEventListener('touchend', (event) => {
+		}, { passive: false });
+		GlobalEvents.register(app.Events, document, 'touchend', (event) => {
 			this.selected_object_actions(event);
 		});
 	}
@@ -75,11 +76,11 @@ class Polygon_class extends Base_tools_class {
 
 		//apply snap
 		var snap_info = this.calc_snap_position(e, mouse_x, mouse_y);
-		if(snap_info != null){
-			if(snap_info.x != null) {
+		if (snap_info != null) {
+			if (snap_info.x != null) {
 				mouse_x = snap_info.x;
 			}
-			if(snap_info.y != null) {
+			if (snap_info.y != null) {
 				mouse_y = snap_info.y;
 			}
 		}
@@ -90,7 +91,7 @@ class Polygon_class extends Base_tools_class {
 			this.layer = {
 				type: this.name,
 				data: [
-					{x: mouse_x, y: mouse_y}
+					{ x: mouse_x, y: mouse_y }
 				],
 				params: this.clone(this.getParams()),
 				render_function: [this.name, 'render'],
@@ -114,7 +115,7 @@ class Polygon_class extends Base_tools_class {
 		else {
 			//add more data
 			config.layer.data.push(
-				{x: mouse_x, y: mouse_y}
+				{ x: mouse_x, y: mouse_y }
 			);
 		}
 
@@ -135,17 +136,17 @@ class Polygon_class extends Base_tools_class {
 
 		//apply snap
 		var snap_info = this.calc_snap_position(e, mouse_x, mouse_y, config.layer.id);
-		if(snap_info != null){
-			if(snap_info.x != null) {
+		if (snap_info != null) {
+			if (snap_info.x != null) {
 				mouse_x = snap_info.x;
 			}
-			if(snap_info.y != null) {
+			if (snap_info.y != null) {
 				mouse_y = snap_info.y;
 			}
 		}
 
 		//add more data
-		config.layer.data[config.layer.data.length - 1] = {x: mouse_x, y: mouse_y};
+		config.layer.data[config.layer.data.length - 1] = { x: mouse_x, y: mouse_y };
 
 		this.Base_layers.render();
 	}
@@ -161,37 +162,37 @@ class Polygon_class extends Base_tools_class {
 
 		//apply snap
 		var snap_info = this.calc_snap_position(e, mouse_x, mouse_y, config.layer.id);
-		if(snap_info != null){
-			if(snap_info.x != null) {
+		if (snap_info != null) {
+			if (snap_info.x != null) {
 				mouse_x = snap_info.x;
 			}
-			if(snap_info.y != null) {
+			if (snap_info.y != null) {
 				mouse_y = snap_info.y;
 			}
 		}
-		this.snap_line_info = {x: null, y: null};
+		this.snap_line_info = { x: null, y: null };
 
 		//add more data
-		config.layer.data[config.layer.data.length - 1] = {x: mouse_x, y: mouse_y};
+		config.layer.data[config.layer.data.length - 1] = { x: mouse_x, y: mouse_y };
 
 		this.Base_layers.render();
 	}
 
-	render_overlay(ctx){
+	render_overlay(ctx) {
 		var ctx = this.Base_layers.ctx;
 		this.render_overlay_parent(ctx);
 
-		if(config.TOOL.name != 'select'){
+		if (config.TOOL.name != 'select') {
 			return;
 		}
 
 		//also draw control lines
-		if(config.layer.type == this.name){
+		if (config.layer.type == this.name) {
 			var data = config.layer.data;
 			this.selected_obj_positions = {};
 
 			//draw corners
-			for(var i in data) {
+			for (var i in data) {
 				var point = data[i];
 
 				this.selected_obj_positions[i] = this.Helper.draw_control_point(
@@ -217,11 +218,11 @@ class Polygon_class extends Base_tools_class {
 		x = (width_all - width) / 2;
 
 		var data = [
-			{x: 0, y: 0},
-			{x: width, y: 0},
-			{x: width * 1.1, y: height * 2 / 3},
-			{x: width / 2, y: height / 3},
-			{x: -1 * width * 0.2, y: height},
+			{ x: 0, y: 0 },
+			{ x: width, y: 0 },
+			{ x: width * 1.1, y: height * 2 / 3 },
+			{ x: width / 2, y: height / 3 },
+			{ x: -1 * width * 0.2, y: height },
 		];
 
 		ctx.save();
@@ -238,9 +239,9 @@ class Polygon_class extends Base_tools_class {
 		//set styles
 		ctx.strokeStyle = 'transparent';
 		ctx.fillStyle = 'transparent';
-		if(params.border)
+		if (params.border)
 			ctx.strokeStyle = params.border_color;
-		if(params.fill)
+		if (params.fill)
 			ctx.fillStyle = params.fill_color;
 		ctx.lineWidth = params.border_size;
 
@@ -253,17 +254,17 @@ class Polygon_class extends Base_tools_class {
 	}
 
 	draw_polygon(ctx, x, y, width, height, data) {
-		if(data.length == 0){
+		if (data.length == 0) {
 			return;
 		}
 
 		//draw
 		ctx.beginPath();
-		for(var i in data) {
-			if(i == 0){
+		for (var i in data) {
+			if (i == 0) {
 				ctx.moveTo(x + data[i].x, y + data[i].y);
 			}
-			else{
+			else {
 				ctx.lineTo(x + data[i].x, y + data[i].y);
 			}
 		}
@@ -273,7 +274,7 @@ class Polygon_class extends Base_tools_class {
 	}
 
 	selected_object_actions(e) {
-		if(config.TOOL.name != 'select' || config.layer.type != this.name){
+		if (config.TOOL.name != 'select' || config.layer.type != this.name) {
 			return;
 		}
 
@@ -283,9 +284,9 @@ class Polygon_class extends Base_tools_class {
 
 		//simplify checks
 		var event_type = e.type;
-		if(event_type == 'touchstart') event_type = 'mousedown';
-		if(event_type == 'touchmove') event_type = 'mousemove';
-		if(event_type == 'touchend') event_type = 'mouseup';
+		if (event_type == 'touchstart') event_type = 'mousedown';
+		if (event_type == 'touchmove') event_type = 'mousemove';
+		if (event_type == 'touchend') event_type = 'mouseup';
 
 		if (event_type == 'mouseup') {
 			//reset

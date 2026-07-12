@@ -4,6 +4,7 @@ import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
 import Dialog_class from './../libs/popup.js';
 import GUI_tools_class from './../core/gui/gui-tools.js';
+import { GlobalEvents } from '../global-events.js';
 
 var instance = null;
 
@@ -31,7 +32,7 @@ class Shape_class extends Base_tools_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -51,7 +52,7 @@ class Shape_class extends Base_tools_class {
 		this.show_shapes();
 	}
 
-	async show_shapes(){
+	async show_shapes() {
 		var _this = this;
 		var html = '';
 
@@ -96,10 +97,10 @@ class Shape_class extends Base_tools_class {
 		//draw demo thumbs
 		for (var i in data) {
 			var function_name = 'demo';
-			var canvas = document.getElementById('c_'+data[i].key);
+			var canvas = document.getElementById('c_' + data[i].key);
 			var ctx = canvas.getContext("2d");
 
-			if(typeof data[i].object[function_name] == "undefined")
+			if (typeof data[i].object[function_name] == "undefined")
 				continue;
 
 			data[i].object[function_name](ctx, 20, 20, this.preview_width - 40, this.preview_height - 40, null);
@@ -110,18 +111,18 @@ class Shape_class extends Base_tools_class {
 
 	}
 
-	get_shapes(){
+	get_shapes() {
 		var list = [];
 
 		for (var i in this.Base_gui.GUI_tools.tools_modules) {
 			var object = this.Base_gui.GUI_tools.tools_modules[i];
-			if (object.full_key.indexOf("shapes/") == -1 )
+			if (object.full_key.indexOf("shapes/") == -1)
 				continue;
 
 			list.push(object);
 		}
 
-		list.sort(function(a, b) {
+		list.sort(function (a, b) {
 			var nameA = a.title.toUpperCase();
 			var nameB = b.title.toUpperCase();
 			if (nameA < nameB) return -1;

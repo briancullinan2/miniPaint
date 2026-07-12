@@ -10,7 +10,6 @@ import Tools_translate_class from './../../modules/tools/translate.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
 import Base_gui_class from '../base-gui.js';
 
-var instance = null;
 
 /**
  * GUI class responsible for rendering left sidebar tools
@@ -19,10 +18,10 @@ class GUI_tools_class {
 
 	constructor(GUI_class) {
 		//singleton
-		if (instance) {
-			return instance;
+		if (GUI_class.GUI_tools) {
+			return GUI_class.GUI_tools;
 		}
-		instance = this;
+		GUI_class.GUI_tools = this;
 
 		this.Helper = new Helper_class();
 		this.Tools_translate = new Tools_translate_class();
@@ -61,7 +60,7 @@ class GUI_tools_class {
 				};
 
 				//init events once
-				if(typeof object.load != "undefined") {
+				if (typeof object.load != "undefined") {
 					object.load();
 				}
 			}
@@ -78,7 +77,7 @@ class GUI_tools_class {
 		var target_id = "tools_container";
 		var _this = this;
 		var saved_tool = this.Helper.getCookie('active_tool');
-		if(saved_tool == 'media' || saved_tool == 'shape') {
+		if (saved_tool == 'media' || saved_tool == 'shape') {
 			//bringing this back by default gives bad UX
 			saved_tool = null
 		}
@@ -89,7 +88,7 @@ class GUI_tools_class {
 		//left menu
 		for (var i in config.TOOLS) {
 			var item = config.TOOLS[i];
-			if(item.title)
+			if (item.title)
 				var title = item.title;
 			else
 				var title = this.Helper.ucfirst(item.name).replace(/_/, ' ');
@@ -103,7 +102,7 @@ class GUI_tools_class {
 			else {
 				itemDom.className = 'item trn ' + item.name;
 			}
-			if(item.visible === false){
+			if (item.visible === false) {
 				itemDom.style.display = 'none';
 			}
 
@@ -201,7 +200,7 @@ class GUI_tools_class {
 					element.classList.add('input_height');
 					element.innerHTML = icon;
 					element.title = k;
-					element.innerHTML = '<img style="width:16px;height:16px;" alt="'+title+'" src="images/icons/'+icon+'" />';
+					element.innerHTML = '<img style="width:16px;height:16px;" alt="' + title + '" src="images/icons/' + icon + '" />';
 				} else {
 					element.classList.add('ui_toggle_button');
 				}

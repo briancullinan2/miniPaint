@@ -1,4 +1,6 @@
 import Helper_class from './helpers.js';
+import app from '../app.js';
+import { GlobalEvents } from '../global-events.js';
 
 /**
  * image pasting into canvas
@@ -20,13 +22,13 @@ class Clipboard_class {
 		this.paste_mode;
 
 		//handlers
-		document.addEventListener('keydown', function (e) {
+		GlobalEvents.register(app.Events, document, 'keydown', function (e) {
 			_self.on_keyboard_action(e);
 		}, false); //firefox fix
-		document.addEventListener('keyup', function (e) {
+		GlobalEvents.register(app.Events, document, 'keyup', function (e) {
 			_self.on_keyboardup_action(e);
 		}, false); //firefox fix
-		document.addEventListener('paste', function (e) {
+		GlobalEvents.register(app.Events, document, 'paste', function (e) {
 			_self.paste_auto(e);
 		}, false); //official paste handler
 
@@ -69,7 +71,7 @@ class Clipboard_class {
 			});
 		});
 		var target = document.getElementById('paste_ff');
-		var config = {attributes: true, childList: true, characterData: true};
+		var config = { attributes: true, childList: true, characterData: true };
 		observer.observe(target, config);
 	}
 

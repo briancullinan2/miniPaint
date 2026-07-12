@@ -9,6 +9,7 @@ import Helper_class from './../libs/helpers.js';
 import Dialog_class from './../libs/popup.js';
 import WebFont from 'webfontloader';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../global-events.js';
 
 /**
  * TODO
@@ -137,8 +138,8 @@ class Font_metrics_class {
 		kerningTestCanvas.height = this.height;
 		kerningTestCtx.clearRect(0, 0, this.width, this.height);
 		kerningTestCtx.font =
-		' ' + (this.size) + 'px' +
-		' ' + this.family;
+			' ' + (this.size) + 'px' +
+			' ' + this.family;
 		kerningTestCtx.textAlign = 'left';
 		kerningTestCtx.textBaseline = baseline;
 		kerningTestCtx.fillStyle = '#000000';
@@ -177,10 +178,10 @@ class Font_metrics_class {
 		let offset = this.kerningMap.get(letters);
 		if (offset == null) {
 			kerningTestCtx.font =
-			' ' + (flags.italic ? 'italic' : '') +
-			' ' + (flags.bold ? 'bold' : '') +
-			' ' + (this.size) + 'px' +
-			' ' + this.family;
+				' ' + (flags.italic ? 'italic' : '') +
+				' ' + (flags.bold ? 'bold' : '') +
+				' ' + (this.size) + 'px' +
+				' ' + this.family;
 			offset = kerningTestCtx.measureText(letters).width - (kerningTestCtx.measureText(letters[0]).width + kerningTestCtx.measureText(letters[1]).width);
 			this.kerningMap.set(letters, offset);
 		}
@@ -214,7 +215,7 @@ class Text_document_class {
 	get_line_character_count(lineNumber) {
 		return this.get_line_text(lineNumber).length;
 	}
-	
+
 	/**
 	 * Returns the text string at a given line (ignores formatting).
 	 * @param {number} lineNumber - The number of the line to get the text from
@@ -226,7 +227,7 @@ class Text_document_class {
 		}
 		return lineText;
 	}
-	
+
 	/**
 	 * Returns the position of the end of the the word at the line/character provided
 	 * @param {number} line - The reference line number (0 indexed) 
@@ -303,7 +304,7 @@ class Text_document_class {
 			character: newCharacter
 		}
 	}
-	
+
 	/**
 	 * Determine if the metadata (formatting) of two text spans is the same, usually used to determine if the spans can be merged together.
 	 */
@@ -372,7 +373,7 @@ class Text_document_class {
 		this.lines[line] = newLine;
 		return insertedSpan;
 	}
-	
+
 	/**
 	 * Inserts a text string in the document at the specified line and character position
 	 * @param {string} text - The text string to insert
@@ -459,7 +460,7 @@ class Text_document_class {
 			character: newCharacter
 		};
 	}
-	
+
 	/**
 	 * Deletes text withing the specified range
 	 * @param {number} startLine - The starting line of the text range
@@ -507,7 +508,7 @@ class Text_document_class {
 
 		// Get spans in end line after range
 		characterCount = 0;
-		let endSpan = null;    
+		let endSpan = null;
 		let endSpanDeleteIndex = 0;
 		for (let i = 0; i < this.lines[endLine].length; i++) {
 			const span = this.lines[endLine][i];
@@ -590,7 +591,7 @@ class Text_document_class {
 			character: startCharacter
 		};
 	}
-	
+
 	/**
 	 * Deletes a single character in front or behind the specified character position, handling deleting new lines, etc.
 	 * @param {boolean} forward - True if deleting the next character, otherwise deletes the previous character
@@ -600,7 +601,7 @@ class Text_document_class {
 	delete_character(forward, startLine, startCharacter) {
 		let endLine = startLine;
 		let endCharacter = startCharacter;
-		
+
 		// Delete forwards
 		if (forward) {
 			// If there are characters after cursor on this line we remove one
@@ -628,7 +629,7 @@ class Text_document_class {
 
 		return this.delete_range(startLine, startCharacter, endLine, endCharacter);
 	}
-	
+
 	/**
 	 * Retrieves a metadata summary object for the specified range of text. 
 	 * @param {number} startLine - The starting line of the text range
@@ -829,7 +830,7 @@ class Text_selection_class {
 			line: 0,
 			character: 0
 		};
-		
+
 		this.end = {
 			line: 0,
 			character: 0
@@ -837,7 +838,7 @@ class Text_selection_class {
 
 		this.set_position(0, 0);
 	}
-	
+
 	/**
 	 * Returns if the current text selection contains no characters
 	 * @returns {boolean}
@@ -845,7 +846,7 @@ class Text_selection_class {
 	is_empty() {
 		return this.compare_position(this.start.line, this.start.character, this.end.line, this.end.character) === 0;
 	}
-	
+
 	/**
 	 * Determines the relative position of two line/character sets.
 	 * @param {number} line1
@@ -869,7 +870,7 @@ class Text_selection_class {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the head position of the selection to the specified line/character, optionally extends to selection to that position.
 	 * @param {number} line - The line number to set the selection to 
@@ -943,7 +944,7 @@ class Text_selection_class {
 			this.start_blinking();
 		}
 	}
-	
+
 	/**
 	 * Retrieves the position of the head of the selection (could be the start or end of the selection based on previous operations)
 	 * @returns {object} - { line, character }
@@ -986,7 +987,7 @@ class Text_selection_class {
 		}
 		return textLines.join('\n');
 	}
-	
+
 	/**
 	 * Sets the visibility of the selection in the editor.
 	 * @param {boolean} isVisible 
@@ -1012,7 +1013,7 @@ class Text_selection_class {
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts the selection cursor blinking.
 	 */
@@ -1020,14 +1021,14 @@ class Text_selection_class {
 		clearInterval(this.blinkIntervalHandle);
 		this.blinkIntervalHandle = setInterval(this.blink.bind(this), this.blinkInterval);
 	}
-	
+
 	/**
 	 * Stops the selection cursor blinking.
 	 */
 	stop_blinking() {
 		clearInterval(this.blinkIntervalHandle);
 	}
-	
+
 	/**
 	 * Toggles the visibility of the selection cursor.
 	 */
@@ -1043,7 +1044,7 @@ class Text_selection_class {
 		*/
 		// this.Base_layers.render();
 	}
-	
+
 	/**
 	 * Moves the cursor to a previous line.
 	 * @param {number} length - The number of lines to move 
@@ -1054,7 +1055,7 @@ class Text_selection_class {
 		const position = this.get_position();
 		this.set_position(position.line - length, null, keepSelection);
 	}
-	
+
 	/**
 	 * Moves the cursor to a next line.
 	 * @param {number} length - The number of lines to move 
@@ -1065,7 +1066,7 @@ class Text_selection_class {
 		const position = this.get_position();
 		this.set_position(position.line + length, null, keepSelection);
 	}
-		
+
 	/**
 	 * Moves to the start of the current line.
 	 * @param {boolean} keepSelection - Whether to move to an empty selection or extend the current selection 
@@ -1083,7 +1084,7 @@ class Text_selection_class {
 		const position = this.get_position();
 		this.set_position(position.line, this.editor.document.get_line_character_count(position.line), keepSelection);
 	}
-	
+
 	/**
 	 * Moves the cursor to a character behind in the document, handles line wrapping.
 	 * @param {number} length - The number of characters to move 
@@ -1100,7 +1101,7 @@ class Text_selection_class {
 			this.set_position(position.line, position.character - length, keepSelection);
 		}
 	}
-	
+
 	/**
 	 * Moves the cursor to a character ahead in the document, handles line wrapping.
 	 * @param {number} length - The number of characters to move 
@@ -1179,7 +1180,7 @@ class Text_editor_class {
 		this.mouseSelectionMoveY = null;
 		this.mouseSelectionEdgeScrollInterval = null;
 		this.focused = false;
-		
+
 		// Text document for this editor
 		this.document = new Text_document_class();
 		this.document.lines = [[{ text: '', meta: {} }]];
@@ -1240,10 +1241,10 @@ class Text_editor_class {
 		let completeText = '';
 		for (let line of this.document.lines) {
 			for (let span of line) {
-					completeText += span.text;
+				completeText += span.text;
 			}
 			if (this.document.lines.indexOf(line) !== this.document.lines.length - 1) {
-					completeText += '\n';
+				completeText += '\n';
 			}
 		}
 		return completeText;
@@ -1260,7 +1261,7 @@ class Text_editor_class {
 		lines[cursorPosition.line] = updatedLineText;
 
 		const newLines = lines.map(lineText => {
-				return [{ text: lineText, meta: {} }];
+			return [{ text: lineText, meta: {} }];
 		});
 		this.set_lines(newLines);
 		this.hasValueChanged = true;
@@ -1286,7 +1287,7 @@ class Text_editor_class {
 		this.selection.set_position(newPosition.line, newPosition.character);
 		this.hasValueChanged = true;
 	}
-	
+
 	delete_character_at_current_position(forward) {
 		let newPosition;
 		if (this.selection.is_empty()) {
@@ -1324,7 +1325,7 @@ class Text_editor_class {
 		this.mouseSelectionStartCharacter = cursorStart.character;
 		this.selection.set_position(cursorStart.line, cursorStart.character, false);
 	}
-	
+
 	trigger_cursor_move(layer, layerX, layerY) {
 		const isInsideCanvas = true; // layerX > 0 && layerY > 0 && layerX < this.lastCalculatedLayerWidth && layerY < this.lastCalculatedLayerHeight;
 		if (this.isMouseSelectionActive && isInsideCanvas) {
@@ -1335,13 +1336,13 @@ class Text_editor_class {
 			this.selection.set_position(cursorEnd.line, cursorEnd.character, true);
 		}
 	}
-	
+
 	trigger_cursor_end() {
 		this.isMouseSelectionActive = false;
 		this.mouseSelectionMoveX = null;
 		this.mouseSelectionMoveY = null;
 	}
-	
+
 	get_cursor_position_from_absolute_position(layer, x, y) {
 		let line = -1;
 		let character = -1;
@@ -1354,10 +1355,10 @@ class Text_editor_class {
 
 			let characterPosition = isHorizontalTextDirection ? x : y;
 			let wrapPosition = isHorizontalTextDirection ? y : x;
-			
+
 			const wrapSizes = this.lineRenderInfo.wrapSizes;
 			let wrapRelativeIndex = -1;
-		
+
 			let globalWrapIndex = 0;
 			for (let [lineIndex, lineInfo] of this.lineRenderInfo.lines.entries()) {
 				wrapRelativeIndex = 0;
@@ -1525,7 +1526,7 @@ class Text_editor_class {
 								});
 							}
 						}
-						let largestOffset = wrapCharacterOffsets[wrapCharacterOffsets.length-1];
+						let largestOffset = wrapCharacterOffsets[wrapCharacterOffsets.length - 1];
 						if (largestOffset > totalTextDirectionSize) {
 							totalTextDirectionSize = largestOffset;
 						}
@@ -1549,7 +1550,7 @@ class Text_editor_class {
 				}
 			}
 			if (currentWrapSpans.length > 0) {
-				let largestOffset = wrapCharacterOffsets[wrapCharacterOffsets.length-1];
+				let largestOffset = wrapCharacterOffsets[wrapCharacterOffsets.length - 1];
 				if (largestOffset > totalTextDirectionSize) {
 					totalTextDirectionSize = largestOffset;
 				}
@@ -1665,7 +1666,7 @@ class Text_editor_class {
 			let wrapIndex = 0;
 			const cursorLine = this.selection.isActiveSideEnd ? this.selection.end.line : this.selection.start.line;
 			const cursorCharacter = this.selection.isActiveSideEnd ? this.selection.end.character : this.selection.start.character;
-			if(layer.rotate){
+			if (layer.rotate) {
 				const alpha = (layer.rotate * Math.PI) / 180;
 				ctx.save();
 				// Move the canvas to the center before rotating
@@ -1727,8 +1728,8 @@ class Text_editor_class {
 							ctx.lineWidth = 0;
 						}
 
-						
-						
+
+
 						// Loop through each letter in each span and draw it
 						for (let c = 0; c < span.text.length; c++) {
 							const letter = span.text.charAt(c);
@@ -1805,7 +1806,7 @@ class Text_editor_class {
 							lineLetterCount++;
 						}
 
-						
+
 
 						if (span.text.length === 0) {
 							if (cursorLine === lineIndex && cursorCharacter === lineLetterCount) {
@@ -1852,7 +1853,7 @@ class Text_editor_class {
 				}
 				lineIndex++;
 			}
-			if(layer.rotate){
+			if (layer.rotate) {
 				ctx.restore();
 			}
 		} catch (error) {
@@ -1954,7 +1955,7 @@ class Google_fonts_search_class {
 				var node = document.createElement("div");
 				this.dialogContentNode = popup.el.querySelector('.dialog_content');
 				this.dialogContentNode.appendChild(node);
-				this.fontListNode = node;				
+				this.fontListNode = node;
 
 				const queryInput = popup.el.querySelector('#pop_data_query');
 				queryInput.addEventListener('input', (e) => {
@@ -1963,7 +1964,7 @@ class Google_fonts_search_class {
 						this.fontListFiltered = this.fontList;
 						this.render_font_list();
 					} else {
-					clearTimeout(this.searchTimeoutHandle);
+						clearTimeout(this.searchTimeoutHandle);
 						this.searchTimeoutHandle = setTimeout(() => {
 							this.fontListFiltered = [];
 							for (let i = 0; i < this.fontList.length; i++) {
@@ -2088,11 +2089,11 @@ class Text_class extends Base_tools_class {
 			let beforeImeText = "";
 			this.textarea.addEventListener('compositionstart', () => {
 				beforeImeText = "";
-					isComposing = true;
-					if (config.layer) {
-						const editor = this.get_editor(config.layer);
-						beforeImeText = editor.get_complete_text();
-					}
+				isComposing = true;
+				if (config.layer) {
+					const editor = this.get_editor(config.layer);
+					beforeImeText = editor.get_complete_text();
+				}
 			});
 
 			this.textarea.addEventListener('compositionend', (e) => {
@@ -2104,7 +2105,7 @@ class Text_class extends Base_tools_class {
 			});
 
 			this.textarea.addEventListener('input', (e) => {
-				if(isComposing){
+				if (isComposing) {
 					const editor = this.get_editor(config.layer);
 					editor.replace_entire_IME_text(beforeImeText, e.target.value);
 					this.Base_layers.render();
@@ -2242,27 +2243,27 @@ class Text_class extends Base_tools_class {
 
 	load() {
 		// Mouse events
-		document.addEventListener('mousedown', (event) => {
+		GlobalEvents.register(app.Events, document, 'mousedown', (event) => {
 			this.dragStart(event);
 		});
-		document.addEventListener('mousemove', (event) => {
+		GlobalEvents.register(app.Events, document, 'mousemove', (event) => {
 			this.dragMove(event);
 		});
-		document.addEventListener('mouseup', (event) => {
+		GlobalEvents.register(app.Events, document, 'mouseup', (event) => {
 			this.dragEnd(event);
 		});
-		document.addEventListener('dblclick', (event) => {
+		GlobalEvents.register(app.Events, document, 'dblclick', (event) => {
 			this.doubleClick(event);
 		});
 
 		// Touch events
-		document.addEventListener('touchstart', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchstart', (event) => {
 			this.dragStart(event);
 		});
-		document.addEventListener('touchmove', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchmove', (event) => {
 			this.dragMove(event);
 		});
-		document.addEventListener('touchend', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchend', (event) => {
 			this.dragEnd(event);
 		});
 	}
@@ -2422,7 +2423,7 @@ class Text_class extends Base_tools_class {
 		else if (this.selecting) {
 			editor.trigger_cursor_end();
 			this.textarea.focus();
-			
+
 			if (editor.selection.is_empty() && editor.document.queuedMetaChanges) {
 				let meta = {};
 				const existingMeta = editor.document.get_meta_range(editor.selection.start.line, editor.selection.start.character, editor.selection.end.line, editor.selection.end.character);
@@ -2621,7 +2622,7 @@ class Text_class extends Base_tools_class {
 				const params = layer.params;
 				let lines = [];
 				const textLines = layer.params.text.split('\n');
-				const family = params.family && params.family.value? params.family.value : params.family;
+				const family = params.family && params.family.value ? params.family.value : params.family;
 				for (const textLine of textLines) {
 					lines.push([
 						{

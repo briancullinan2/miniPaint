@@ -5,6 +5,7 @@ import Base_layers_class from './../../core/base-layers.js';
 import Dialog_class from './../../libs/popup.js';
 import Helper_class from './../../libs/helpers.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -21,12 +22,12 @@ class Image_trim_class {
 		this.Base_gui = new Base_gui_class();
 		this.Helper = new Helper_class();
 		this.Dialog = new Dialog_class();
-				
+
 		this.set_events();
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -42,16 +43,16 @@ class Image_trim_class {
 	trim() {
 		var _this = this;
 		var removeWhiteColor = false;
-		if(config.TRANSPARENCY == false)
+		if (config.TRANSPARENCY == false)
 			removeWhiteColor = true;
 
 		var settings = {
 			title: 'Trim',
 			params: [
-				{name: "trim_layer", title: "Trim layer:", value: true},
-				{name: "trim_all", title: "Trim borders:", value: true},
-				{name: "power", title: "Power:", value: 0, max: 255},
-				{name: "remove_white", title: "Trim white color?", value: removeWhiteColor},
+				{ name: "trim_layer", title: "Trim layer:", value: true },
+				{ name: "trim_all", title: "Trim borders:", value: true },
+				{ name: "power", title: "Power:", value: 0, max: 255 },
+				{ name: "remove_white", title: "Trim white color?", value: removeWhiteColor },
 			],
 			on_finish: async (params) => {
 				if (params.trim_layer == true) {
@@ -85,15 +86,15 @@ class Image_trim_class {
 	 */
 	trim_layer(layer_id, removeWhiteColor = false, power = 0) {
 		var layer = this.Base_layers.get_layer(layer_id);
-		
+
 		if (layer.type != 'image') {
 			alertify.error('Skip - layer must be image.');
 			return false;
 		}
-		
+
 		var trim = this.get_trim_info(layer_id, removeWhiteColor, power);
 		trim = trim.relative;
-	
+
 		//if image was stretched
 		var width_ratio = (layer.width / layer.width_original);
 		var height_ratio = (layer.height / layer.height_original);
@@ -147,7 +148,7 @@ class Image_trim_class {
 		//collect info
 		for (let i = 0; i < config.layers.length; i++) {
 			let layer = config.layers[i];
-			
+
 			if (layer.width == null || layer.height == null || layer.x == null || layer.y == null) {
 				//layer without dimensions
 				const trim_info = this.get_trim_info(layer.id, removeWhiteColor, power);
@@ -157,7 +158,7 @@ class Image_trim_class {
 				all_bottom = Math.min(all_bottom, trim_info.bottom);
 				all_right = Math.min(all_right, trim_info.right);
 			}
-			else{
+			else {
 				all_top = Math.min(all_top, layer.y);
 				all_left = Math.min(all_left, layer.x);
 				all_bottom = Math.min(all_bottom, config.HEIGHT - layer.height - layer.y);
@@ -170,7 +171,7 @@ class Image_trim_class {
 			let layer = config.layers[i];
 			if (layer.x == null || layer.y == null || layer.type == null)
 				continue;
-			
+
 			actions.push(
 				new app.Actions.Update_layer_action(layer.id, {
 					x: layer.x - all_left,
@@ -190,7 +191,7 @@ class Image_trim_class {
 		);
 		return actions;
 	}
-	
+
 	/**
 	 * get painted area coords
 	 * 
@@ -223,7 +224,7 @@ class Image_trim_class {
 
 		//check top
 		main1:
-			for (var y = 0; y < img.height; y++) {
+		for (var y = 0; y < img.height; y++) {
 			for (var x = 0; x < img.width; x++) {
 				var k = ((y * (img.width * 4)) + (x * 4));
 				if (imgData[k + 3] <= power)
@@ -237,7 +238,7 @@ class Image_trim_class {
 		}
 		//check left
 		main2:
-			for (var x = 0; x < img.width; x++) {
+		for (var x = 0; x < img.width; x++) {
 			for (var y = 0; y < img.height; y++) {
 				var k = ((y * (img.width * 4)) + (x * 4));
 				if (imgData[k + 3] <= power)
@@ -251,7 +252,7 @@ class Image_trim_class {
 		}
 		//check bottom
 		main3:
-			for (var y = img.height - 1; y >= 0; y--) {
+		for (var y = img.height - 1; y >= 0; y--) {
 			for (var x = img.width - 1; x >= 0; x--) {
 				var k = ((y * (img.width * 4)) + (x * 4));
 				if (imgData[k + 3] <= power)
@@ -265,7 +266,7 @@ class Image_trim_class {
 		}
 		//check right
 		main4:
-			for (var x = img.width - 1; x >= 0; x--) {
+		for (var x = img.width - 1; x >= 0; x--) {
 			for (var y = img.height - 1; y >= 0; y--) {
 				var k = ((y * (img.width * 4)) + (x * 4));
 				if (imgData[k + 3] <= power)
@@ -277,7 +278,7 @@ class Image_trim_class {
 			}
 			right++;
 		}
-		
+
 		var top_rel = top - layer.y;
 		var left_rel = left - layer.x;
 		var bottom_rel = bottom - (config.HEIGHT - layer.y - layer.height);

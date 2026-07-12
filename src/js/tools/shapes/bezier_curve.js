@@ -3,6 +3,7 @@ import config from './../../config.js';
 import Base_tools_class from './../../core/base-tools.js';
 import Base_layers_class from './../../core/base-layers.js';
 import Helper_class from './../../libs/helpers.js';
+import { GlobalEvents } from '../../global-events.js';
 
 class Bezier_Curve_class extends Base_tools_class {
 
@@ -14,7 +15,7 @@ class Bezier_Curve_class extends Base_tools_class {
 		this.name = 'bezier_curve';
 		this.layer = {};
 		this.best_ratio = 1;
-		this.snap_line_info = {x: null, y: null};
+		this.snap_line_info = { x: null, y: null };
 		this.params_hash = false;
 		this.selected_obj_positions = {};
 		this.mouse_lock = null;
@@ -27,7 +28,7 @@ class Bezier_Curve_class extends Base_tools_class {
 	load() {
 		var _this = this;
 		this.default_events();
-		document.addEventListener('keydown', function (event) {
+		GlobalEvents.register(app.Events, document, 'keydown', function (event) {
 			if (config.TOOL.name != _this.name) {
 				return;
 			}
@@ -42,24 +43,24 @@ class Bezier_Curve_class extends Base_tools_class {
 	 * events for handling helping lines only
 	 */
 	events() {
-		document.addEventListener('mousedown', (e) => {
+		GlobalEvents.register(app.Events, document, 'mousedown', (e) => {
 			this.selected_object_actions(e);
 		});
-		document.addEventListener('mousemove', (e) => {
+		GlobalEvents.register(app.Events, document, 'mousemove', (e) => {
 			this.selected_object_actions(e);
 		});
-		document.addEventListener('mouseup', (e) => {
+		GlobalEvents.register(app.Events, document, 'mouseup', (e) => {
 			this.selected_object_actions(e);
 		});
 
 		// touch
-		document.addEventListener('touchstart', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchstart', (event) => {
 			this.selected_object_actions(event);
 		});
-		document.addEventListener('touchmove', (event) => {
+		GlobalEvents.register(app.Events, document, 'touchmove', (event) => {
 			this.selected_object_actions(event);
-		}, {passive: false});
-		document.addEventListener('touchend', (event) => {
+		}, { passive: false });
+		GlobalEvents.register(app.Events, document, 'touchend', (event) => {
 			this.selected_object_actions(event);
 		});
 	}
@@ -77,11 +78,11 @@ class Bezier_Curve_class extends Base_tools_class {
 
 		//apply snap
 		var snap_info = this.calc_snap_position(e, mouse_x, mouse_y);
-		if(snap_info != null){
-			if(snap_info.x != null) {
+		if (snap_info != null) {
+			if (snap_info.x != null) {
 				mouse_x = snap_info.x;
 			}
-			if(snap_info.y != null) {
+			if (snap_info.y != null) {
 				mouse_y = snap_info.y;
 			}
 		}
@@ -94,10 +95,10 @@ class Bezier_Curve_class extends Base_tools_class {
 			this.layer = {
 				type: this.name,
 				data: {
-					start: {x: mouse_x, y: mouse_y},
-					cp1: {x: null, y: null},
-					cp2: {x: null, y: null},
-					end: {x: null, y: null}
+					start: { x: mouse_x, y: mouse_y },
+					cp1: { x: null, y: null },
+					cp2: { x: null, y: null },
+					end: { x: null, y: null }
 				},
 				params: this.clone(this.getParams()),
 				render_function: [this.name, 'render'],
@@ -154,22 +155,22 @@ class Bezier_Curve_class extends Base_tools_class {
 
 		//apply snap
 		var snap_info = this.calc_snap_position(e, mouse_x, mouse_y, config.layer.id);
-		if(snap_info != null){
-			if(snap_info.x != null) {
+		if (snap_info != null) {
+			if (snap_info.x != null) {
 				mouse_x = snap_info.x;
 			}
-			if(snap_info.y != null) {
+			if (snap_info.y != null) {
 				mouse_y = snap_info.y;
 			}
 		}
 
 		//add more data
-		if(config.layer.data.end.x === null){
+		if (config.layer.data.end.x === null) {
 			//still first step
 			config.layer.data.cp1.x = mouse_x;
 			config.layer.data.cp1.y = mouse_y;
 		}
-		else{
+		else {
 			config.layer.data.cp2.x = mouse_x;
 			config.layer.data.cp2.y = mouse_y;
 		}
@@ -201,23 +202,23 @@ class Bezier_Curve_class extends Base_tools_class {
 
 		//apply snap
 		var snap_info = this.calc_snap_position(e, mouse_x, mouse_y, config.layer.id);
-		if(snap_info != null){
-			if(snap_info.x != null) {
+		if (snap_info != null) {
+			if (snap_info.x != null) {
 				mouse_x = snap_info.x;
 			}
-			if(snap_info.y != null) {
+			if (snap_info.y != null) {
 				mouse_y = snap_info.y;
 			}
 		}
-		this.snap_line_info = {x: null, y: null};
+		this.snap_line_info = { x: null, y: null };
 
 		//add more data
-		if(config.layer.data.end.x === null){
+		if (config.layer.data.end.x === null) {
 			//still first step
 			config.layer.data.cp1.x = mouse_x;
 			config.layer.data.cp1.y = mouse_y;
 		}
-		else{
+		else {
 			config.layer.data.cp2.x = mouse_x;
 			config.layer.data.cp2.y = mouse_y;
 			config.layer.status = null;
@@ -226,12 +227,12 @@ class Bezier_Curve_class extends Base_tools_class {
 		this.Base_layers.render();
 	}
 
-	render_overlay(ctx){
+	render_overlay(ctx) {
 		var ctx = this.Base_layers.ctx;
 		this.render_overlay_parent(ctx);
 
 		//also draw control lines
-		if(config.layer.type == this.name){
+		if (config.layer.type == this.name) {
 			var bezier = config.layer.data;
 			this.selected_obj_positions = {};
 
@@ -247,7 +248,7 @@ class Bezier_Curve_class extends Base_tools_class {
 					x + bezier.cp1.x,
 					y + bezier.cp1.y
 				);
-				if(config.TOOL.name == 'select') {
+				if (config.TOOL.name == 'select') {
 					this.selected_obj_positions.cp1_start = this.Helper.draw_control_point(
 						this.ctx,
 						x + bezier.start.x,
@@ -268,7 +269,7 @@ class Bezier_Curve_class extends Base_tools_class {
 					x + bezier.cp2.x,
 					y + bezier.cp2.y
 				);
-				if(config.TOOL.name == 'select') {
+				if (config.TOOL.name == 'select') {
 					this.selected_obj_positions.cp2_start = this.Helper.draw_control_point(
 						this.ctx,
 						x + bezier.end.x,
@@ -290,10 +291,10 @@ class Bezier_Curve_class extends Base_tools_class {
 
 	demo(ctx, x, y, width, height) {
 		var data = {
-			start: {x: x, y: y},
-			cp1: {x: x + width, y: y},
-			cp2: {x: x, y: y + height},
-			end: {x: x + width, y: y + height}
+			start: { x: x, y: y },
+			cp1: { x: x + width, y: y },
+			cp2: { x: x, y: y + height },
+			end: { x: x + width, y: y + height }
 		};
 
 		this.draw_bezier(ctx, 0, 0, data, 2, '#555');
@@ -305,7 +306,7 @@ class Bezier_Curve_class extends Base_tools_class {
 	}
 
 	draw_bezier(ctx, x, y, data, lineWidth, color) {
-		if(data.end.x == null || data.cp2.x == null){
+		if (data.end.x == null || data.cp2.x == null) {
 			return;
 		}
 
@@ -327,7 +328,7 @@ class Bezier_Curve_class extends Base_tools_class {
 	}
 
 	selected_object_actions(e) {
-		if(config.TOOL.name != 'select' || config.layer.type != this.name || config.layer.status == 'draft'){
+		if (config.TOOL.name != 'select' || config.layer.type != this.name || config.layer.status == 'draft') {
 			return;
 		}
 
@@ -343,9 +344,9 @@ class Bezier_Curve_class extends Base_tools_class {
 
 		//simplify checks
 		var event_type = e.type;
-		if(event_type == 'touchstart') event_type = 'mousedown';
-		if(event_type == 'touchmove') event_type = 'mousemove';
-		if(event_type == 'touchend') event_type = 'mouseup';
+		if (event_type == 'touchstart') event_type = 'mousedown';
+		if (event_type == 'touchmove') event_type = 'mousemove';
+		if (event_type == 'touchend') event_type = 'mouseup';
 
 		if (event_type == 'mouseup') {
 			//reset
@@ -371,7 +372,7 @@ class Bezier_Curve_class extends Base_tools_class {
 				var dy = Math.round(mouse.y - mouse.click_y) - config.layer.y;
 
 				// Set values
-				if(type == 'cp1_start') {
+				if (type == 'cp1_start') {
 					bezier.start.x = mouse.click_x + dx;
 					bezier.start.y = mouse.click_y + dy;
 
@@ -385,13 +386,13 @@ class Bezier_Curve_class extends Base_tools_class {
 							bezier.start.x = bezier.cp1.x;
 					}
 				}
-				else if(type == 'cp1_end') {
+				else if (type == 'cp1_end') {
 					bezier.cp1.x = mouse.click_x + dx;
 					bezier.cp1.y = mouse.click_y + dy;
 
 					if (e.ctrlKey == true || e.metaKey) {
 						//one direction only
-						var width = mouse_x -bezier.start.x;
+						var width = mouse_x - bezier.start.x;
 						var height = mouse_y - bezier.start.y;
 						if (Math.abs(width) > Math.abs(height))
 							bezier.cp1.y = bezier.start.y;
@@ -399,8 +400,8 @@ class Bezier_Curve_class extends Base_tools_class {
 							bezier.cp1.x = bezier.start.x;
 					}
 				}
-				else if(type == 'cp2_start') {
-					bezier.end.x = mouse.click_x+ dx;
+				else if (type == 'cp2_start') {
+					bezier.end.x = mouse.click_x + dx;
 					bezier.end.y = mouse.click_y + dy;
 
 					if (e.ctrlKey == true || e.metaKey) {
@@ -413,14 +414,14 @@ class Bezier_Curve_class extends Base_tools_class {
 							bezier.end.x = bezier.cp2.x;
 					}
 				}
-				else if(type == 'cp2_end') {
+				else if (type == 'cp2_end') {
 					bezier.cp2.x = mouse.click_x + dx;
 					bezier.cp2.y = mouse.click_y + dy;
 
 					if (e.ctrlKey == true || e.metaKey) {
 						//one direction only
 						var width = mouse_x - bezier.end.x;
-						var height = mouse_y -  bezier.end.y;
+						var height = mouse_y - bezier.end.y;
 						if (Math.abs(width) > Math.abs(height))
 							bezier.cp2.y = bezier.end.y;
 						else

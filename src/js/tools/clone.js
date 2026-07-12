@@ -4,6 +4,7 @@ import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
 import Layer_raster_class from './../modules/layer/raster.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../global-events.js';
 
 class Clone_class extends Base_tools_class {
 
@@ -25,35 +26,35 @@ class Clone_class extends Base_tools_class {
 		var is_touch = false;
 
 		//mouse events
-		document.addEventListener('mousedown', function (event) {
-			if(is_touch)
+		GlobalEvents.register(app.Events, document, 'mousedown', function (event) {
+			if (is_touch)
 				return;
 			_this.dragStart(event);
 		});
-		document.addEventListener('mousemove', function (event) {
-			if(is_touch)
+		GlobalEvents.register(app.Events, document, 'mousemove', function (event) {
+			if (is_touch)
 				return;
 			_this.dragMove(event);
 		});
-		document.addEventListener('mouseup', function (event) {
-			if(is_touch)
+		GlobalEvents.register(app.Events, document, 'mouseup', function (event) {
+			if (is_touch)
 				return;
 			_this.dragEnd(event);
 		});
 
 		// collect touch events
-		document.addEventListener('touchstart', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchstart', function (event) {
 			is_touch = true;
 			_this.dragStart(event);
 		});
-		document.addEventListener('touchmove', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchmove', function (event) {
 			_this.dragMove(event);
 		});
-		document.addEventListener('touchend', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchend', function (event) {
 			_this.dragEnd(event);
 		});
 
-		document.addEventListener('contextmenu', function (event) {
+		GlobalEvents.register(app.Events, document, 'contextmenu', function (event) {
 			_this.mouseRightClick(event);
 		});
 	}
@@ -66,7 +67,7 @@ class Clone_class extends Base_tools_class {
 
 		var mouse = this.get_mouse_info(event);
 		if (mouse.click_valid == true) {
-			this.pressTimer = window.setTimeout(function() {
+			this.pressTimer = window.setTimeout(function () {
 				//long press success
 				_this.mouseLongClick();
 			}, 2000);
@@ -144,7 +145,7 @@ class Clone_class extends Base_tools_class {
 		}
 	}
 
-	mouseLongClick(){
+	mouseLongClick() {
 		var params = this.getParams();
 		var mouse = this.get_mouse_info();
 

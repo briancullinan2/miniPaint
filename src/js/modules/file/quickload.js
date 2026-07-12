@@ -1,6 +1,8 @@
 import config from './../../config.js';
 import Base_layers_class from './../../core/base-layers.js';
 import File_open_class from './open.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 /** 
  * manages files / quick-load
@@ -19,7 +21,7 @@ class File_quickload_class {
 	set_events() {
 		var _this = this;
 
-		document.addEventListener('keydown', function (event) {
+		GlobalEvents.register(app.Events, document, 'keydown', function (event) {
 			var code = event.keyCode;
 
 			if (code == 121) {

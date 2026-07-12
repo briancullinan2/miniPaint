@@ -6,6 +6,8 @@
 import config from './../../config.js';
 import menuDefinition from './../../config-menu.js';
 import Tools_translate_class from './../../modules/tools/translate.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 /**
  * class responsible for rendering main menu
@@ -49,9 +51,9 @@ class GUI_menu_class {
 		this.menuBarNode.querySelectorAll('a').forEach((link) => {
 			link.addEventListener('focus', (event) => { return this.on_focus_menu_bar_link(event); });
 		});
-		document.body.addEventListener('mousedown', (event) => { return this.on_mouse_down_body(event); }, true);
-		document.body.addEventListener('touchstart', (event) => { return this.on_mouse_down_body(event); }, true);
-		window.addEventListener('resize', (event) => { return this.on_resize_window(event); }, true);
+		GlobalEvents.register(app.Events, document.body, 'mousedown', (event) => { return this.on_mouse_down_body(event); }, true);
+		GlobalEvents.register(app.Events, document.body, 'touchstart', (event) => { return this.on_mouse_down_body(event); }, true);
+		GlobalEvents.register(app.Events, window, 'resize', (event) => { return this.on_resize_window(event); }, true);
 
 		document.body.classList.add('loaded');
 

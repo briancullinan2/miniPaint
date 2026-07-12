@@ -10,6 +10,7 @@ import Pica from './../../../../node_modules/pica/dist/pica.js';
 import Helper_class from './../../libs/helpers.js';
 import Tools_settings_class from './../tools/settings.js';
 import { metaDefaults as textMetaDefaults } from '../../tools/text.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -35,7 +36,7 @@ class Image_resize_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -60,14 +61,14 @@ class Image_resize_class {
 		var settings = {
 			title: 'Resize',
 			params: [
-				{name: "width", title: "Width:", value: '', placeholder: width, comment: units},
-				{name: "height", title: "Height:", value: '', placeholder: height, comment: units},
-				{name: "width_percent", title: "Width (%):", value: '', placeholder: 100, comment: "%"},
-				{name: "height_percent", title: "Height (%):", value: '', placeholder: 100, comment: "%"},
-				{name: "mode", title: "Mode:", values: ["Lanczos", "Hermite", "Basic"]},
+				{ name: "width", title: "Width:", value: '', placeholder: width, comment: units },
+				{ name: "height", title: "Height:", value: '', placeholder: height, comment: units },
+				{ name: "width_percent", title: "Width (%):", value: '', placeholder: 100, comment: "%" },
+				{ name: "height_percent", title: "Height (%):", value: '', placeholder: 100, comment: "%" },
+				{ name: "mode", title: "Mode:", values: ["Lanczos", "Hermite", "Basic"] },
 
-				{name: "sharpen", title: "Sharpen:", value: false},
-				{name: "layers", title: "Layers:", values: ["All", "Active"], value: "All"},
+				{ name: "sharpen", title: "Sharpen:", value: false },
+				{ name: "layers", title: "Layers:", values: ["All", "Active"], value: "All" },
 			],
 			on_finish: function (params) {
 				_this.do_resize(params);
@@ -84,10 +85,10 @@ class Image_resize_class {
 			alertify.error('Missing at least 1 size parameter.');
 			return false;
 		}
-		
+
 		// Build a list of actions to execute for resize
 		let actions = [];
-		
+
 		if (params.layers == 'All') {
 			//resize all layers
 			var skips = 0;
@@ -133,10 +134,10 @@ class Image_resize_class {
 		var _this = this;
 
 		//convert units
-		if (isNaN(width) == false){
+		if (isNaN(width) == false) {
 			width = this.Helper.get_internal_unit(width, units, resolution);
 		}
-		if (isNaN(height) == false){
+		if (isNaN(height) == false) {
 			height = this.Helper.get_internal_unit(height, units, resolution);
 		}
 
@@ -158,17 +159,17 @@ class Image_resize_class {
 			var canvas_ratio = config.WIDTH / config.HEIGHT;
 			if (isNaN(width))
 				width = Math.round(height * ratio);
-				canvas_width = Math.round(canvas_height * canvas_ratio);
+			canvas_width = Math.round(canvas_height * canvas_ratio);
 			if (isNaN(height))
 				height = Math.round(width / ratio);
-				canvas_height = Math.round(canvas_width / canvas_ratio);
+			canvas_height = Math.round(canvas_width / canvas_ratio);
 		}
 
 		let new_x = params.layers == 'All' ? Math.round(layer.x * width / config.WIDTH) : layer.x;
 		let new_y = params.layers == 'All' ? Math.round(layer.y * height / config.HEIGHT) : layer.y;
 		let xratio = width / config.WIDTH;
 		let yratio = height / config.HEIGHT;
-		
+
 		//is text
 		if (layer.type == 'text') {
 			let data = JSON.parse(JSON.stringify(layer.data));
@@ -183,7 +184,7 @@ class Image_resize_class {
 			// Return actions
 			return [
 				new app.Actions.Update_layer_action(layer.id, {
-					x: new_x, 
+					x: new_x,
 					y: new_y,
 					data,
 					width: layer.width * xratio,
@@ -191,27 +192,27 @@ class Image_resize_class {
 				})
 			];
 		}
-		
+
 		//is vector
 		else if (layer.is_vector == true && layer.width != null && layer.height != null) {
 			// Return actions
 			return [
 				new app.Actions.Update_layer_action(layer.id, {
-					x: new_x, 
+					x: new_x,
 					y: new_y,
 					width: layer.width * xratio,
 					height: layer.height * yratio
 				})
 			];
 		}
-		
+
 		//only images supported at this point
 		else if (layer.type != 'image') {
 			//error - no support
 			alertify.error('Layer must be vector or image (convert it to raster).');
 			throw new Error('Layer is not compatible with resize');
 		}
-		
+
 		//get canvas from layer
 		var canvas = this.Base_layers.convert_layer_to_canvas(layer.id, true, false);
 		var ctx = canvas.getContext("2d");
@@ -221,24 +222,24 @@ class Image_resize_class {
 			alertify.warning('Scaling up is not supported in Hermite, using Lanczos.');
 			mode = "Lanczos";
 		}
-		
+
 		//resize
 		if (mode == "Lanczos") {
 			//Pica resize with max quality
-			
+
 			var tmp_data = document.createElement("canvas");
 			tmp_data.width = width;
 			tmp_data.height = height;
-			
+
 			await this.pica.resize(canvas, tmp_data, {
 				alpha: true,
 			})
-			.then((result) => {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				canvas.width = width;
-				canvas.height = height;
-				ctx.drawImage(tmp_data, 0, 0, width, height);
-			});
+				.then((result) => {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					canvas.width = width;
+					canvas.height = height;
+					ctx.drawImage(tmp_data, 0, 0, width, height);
+				});
 		}
 		else if (mode == "Hermite") {
 			//Hermite resample
@@ -250,11 +251,11 @@ class Image_resize_class {
 			tmp_data.width = canvas.width;
 			tmp_data.height = canvas.height;
 			tmp_data.getContext("2d").drawImage(canvas, 0, 0);
-			
+
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			canvas.width = width;
 			canvas.height = height;
-			
+
 			ctx.drawImage(tmp_data, 0, 0, width, height);
 		}
 
@@ -268,7 +269,7 @@ class Image_resize_class {
 		return [
 			new app.Actions.Update_layer_image_action(canvas, layer.id),
 			new app.Actions.Update_layer_action(layer.id, {
-				x: new_x, 
+				x: new_x,
 				y: new_y,
 				width: canvas.width,
 				height: canvas.height,
@@ -277,7 +278,7 @@ class Image_resize_class {
 			})
 		];
 	}
-	
+
 	resize_gui(params) {
 		var units = this.Tools_settings.get_setting('default_units');
 		var resolution = this.Tools_settings.get_setting('resolution');
@@ -288,10 +289,10 @@ class Image_resize_class {
 		var height_100 = parseInt(params.height_percent);
 
 		//convert units
-		if (isNaN(width) == false){
+		if (isNaN(width) == false) {
 			width = this.Helper.get_internal_unit(width, units, resolution);
 		}
-		if (isNaN(height) == false){
+		if (isNaN(height) == false) {
 			height = this.Helper.get_internal_unit(height, units, resolution);
 		}
 

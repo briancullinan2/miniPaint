@@ -9,8 +9,8 @@ import Base_gui_class from './base-gui.js';
 import Helper_class from './../libs/helpers.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
 import app from '../app.js';
+import { GlobalEvents } from '../global-events.js';
 
-var instance = null;
 
 /**
  * Undo state class. Supports multiple levels undo.
@@ -19,10 +19,10 @@ class Base_state_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.State) {
+			return app.State;
 		}
-		instance = this;
+		app.State = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Base_gui = new Base_gui_class();
@@ -39,7 +39,7 @@ class Base_state_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			const key = (event.key || '').toLowerCase();
 			if (this.Helper.is_input(event.target))
 				return;

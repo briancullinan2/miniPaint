@@ -9,6 +9,7 @@ import filesaver from './../../../../node_modules/file-saver/dist/FileSaver.min.
 import GIF from './../../../../node_modules/gif.js.optimized/';
 import CanvasToTIFF from './../../libs/canvastotiff.js';
 import Tools_settings_class from "../tools/settings";
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -18,7 +19,7 @@ var instance = null;
  * @author ViliusL
  */
 class File_save_class {
-	
+
 	constructor() {
 		//singleton
 		if (instance) {
@@ -49,17 +50,17 @@ class File_save_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.key.toLowerCase();
 			if (this.Helper.is_input(event.target))
 				return;
 
 			if (code == "s") {
-				if(event.shiftKey){
+				if (event.shiftKey) {
 					//export
 					this.save();
 				}
-				else{
+				else {
 					//save
 					this.export();
 				}
@@ -71,10 +72,10 @@ class File_save_class {
 	/**
 	 * saves as non destructive mode (including layers, RAW)
 	 */
-	save(){
+	save() {
 		var types = JSON.parse(JSON.stringify(this.SAVE_TYPES));
-		for(var i in types){
-			if(i != 'JSON'){
+		for (var i in types) {
+			if (i != 'JSON') {
 				delete types[i];
 			}
 		}
@@ -86,7 +87,7 @@ class File_save_class {
 	/**
 	 * save as encoded image
 	 */
-	export(){
+	export() {
 		var types = JSON.parse(JSON.stringify(this.SAVE_TYPES));
 		delete types.JSON;
 
@@ -100,13 +101,13 @@ class File_save_class {
 		var save_default = null;
 		var save_default_cookie = this.Helper.getCookie('save_default');
 
-		for(var i in file_types) {
-			if(save_default_cookie == i){
+		for (var i in file_types) {
+			if (save_default_cookie == i) {
 				save_default = i;
 				break;
 			}
 		}
-		if(save_default == null){
+		if (save_default == null) {
 			save_default = Object.keys(file_types)[0];
 		}
 		save_default = save_default + " - " + file_types[save_default];
@@ -126,7 +127,7 @@ class File_save_class {
 		file_name = this.Helper.escapeHtml(file_name);
 
 		var save_types = [];
-		for(var i in file_types) {
+		for (var i in file_types) {
 			save_types.push(i + " - " + file_types[i]);
 		}
 
@@ -141,14 +142,14 @@ class File_save_class {
 		var settings = {
 			title: title,
 			params: [
-				{name: "name", title: "File name:", value: file_name},
-				{name: "type", title: "Save as type:", values: save_types, value: save_default},
-				{name: "quality", title: "Quality:", value: 90, range: [1, 100]},
-				{title: "File size:", html: '<span id="file_size">-</span>'},
-				{title: "Resolution:",  value: resolution},
-				{name: "calc_size", title: "Show file size:", value: calc_size_value},
-				{name: "layers", title: "Save layers:", values: save_layers_types},
-				{name: "delay", title: "Gif delay:", value: 400},
+				{ name: "name", title: "File name:", value: file_name },
+				{ name: "type", title: "Save as type:", values: save_types, value: save_default },
+				{ name: "quality", title: "Quality:", value: 90, range: [1, 100] },
+				{ title: "File size:", html: '<span id="file_size">-</span>' },
+				{ title: "Resolution:", value: resolution },
+				{ name: "calc_size", title: "Show file size:", value: calc_size_value },
+				{ name: "layers", title: "Save layers:", values: save_layers_types },
+				{ name: "delay", title: "Gif delay:", value: 400 },
 			],
 			on_change: function (params, canvas_preview, w, h) {
 				_this.save_dialog_onchange(true);
@@ -176,7 +177,7 @@ class File_save_class {
 								}
 							}
 						}
-						
+
 						new app.Actions.Select_layer_action(config.layers[i].id, true).do();
 						_this.save_action(params, true);
 					}
@@ -195,7 +196,7 @@ class File_save_class {
 			//calc size once
 			this.save_dialog_onchange(true);
 		}
-		else{
+		else {
 			this.save_dialog_onchange(false);
 		}
 	}
@@ -227,7 +228,7 @@ class File_save_class {
 		var settings = {
 			title: 'Data URL',
 			params: [
-				{name: "url", title: "URL:", type: "textarea", value: data_url},
+				{ name: "url", title: "URL:", type: "textarea", value: data_url },
 			],
 		};
 		this.POP.show(settings);
@@ -288,18 +289,18 @@ class File_save_class {
 			document.getElementById('pop_data_name').disabled = false;
 
 		if (user_response.layers == 'Separated (original types)') {
-			if(document.getElementById('popup-group-type')) {
+			if (document.getElementById('popup-group-type')) {
 				document.getElementById('popup-group-type').style.opacity = "0.5";
 			}
 			document.getElementById('popup-tr-quality').style.display = '';
 		}
 		else {
-			if(document.getElementById('popup-group-type')) {
+			if (document.getElementById('popup-group-type')) {
 				document.getElementById('popup-group-type').style.opacity = "1";
 			}
 		}
 
-		if(calculate_file_size == false){
+		if (calculate_file_size == false) {
 			return;
 		}
 
@@ -417,7 +418,7 @@ class File_save_class {
 			//tiff
 			var data_header = "image/tiff";
 
-			CanvasToTIFF.toBlob(canvas, function(blob) {
+			CanvasToTIFF.toBlob(canvas, function (blob) {
 				_this.update_file_size(blob.size);
 			}, data_header);
 		}
@@ -425,7 +426,7 @@ class File_save_class {
 			//json
 			var data_json = this.export_as_json();
 
-			var blob = new Blob([data_json], {type: "text/plain"});
+			var blob = new Blob([data_json], { type: "text/plain" });
 			this.update_file_size(blob.size);
 		}
 		else if (type == 'GIF') {
@@ -433,7 +434,7 @@ class File_save_class {
 			this.update_file_size('-');
 		}
 	}
-	
+
 	/**
 	 * saves data in requested way
 	 * 
@@ -442,7 +443,7 @@ class File_save_class {
 	 */
 	save_action(user_response, autoname) {
 		var fname = user_response.name;
-		if(autoname === true && user_response.layers == 'Selected'){
+		if (autoname === true && user_response.layers == 'Selected') {
 			fname = config.layer.name;
 		}
 
@@ -461,14 +462,14 @@ class File_save_class {
 		type = parts[0];
 
 		//detect type from file name
-		for(var i in this.SAVE_TYPES) {
+		for (var i in this.SAVE_TYPES) {
 			if (this.Helper.strpos(fname, '.' + i.toLowerCase()) !== false) {
 				type = i;
 			}
 		}
 
 		//save default type as cookie
-		if(this.Helper.getCookie('save_default') == '' || this.Helper.getCookie('save_default') != type){
+		if (this.Helper.getCookie('save_default') == '' || this.Helper.getCookie('save_default') != type) {
 			this.Helper.setCookie('save_default', type);
 		}
 
@@ -476,7 +477,7 @@ class File_save_class {
 			//temp canvas
 			var canvas;
 			var ctx;
-			
+
 			//get data
 			if (user_response.layers == 'Selected' && type != 'GIF') {
 				canvas = this.Base_layers.convert_layer_to_canvas();
@@ -488,7 +489,7 @@ class File_save_class {
 				canvas.width = config.WIDTH;
 				canvas.height = config.HEIGHT;
 				this.disable_canvas_smooth(ctx);
-				
+
 				this.Base_layers.convert_layers_to_canvas(ctx, null, false);
 			}
 		}
@@ -573,7 +574,7 @@ class File_save_class {
 				fname = fname + ".tiff";
 			var data_header = "image/tiff";
 
-			CanvasToTIFF.toBlob(canvas, function(blob) {
+			CanvasToTIFF.toBlob(canvas, function (blob) {
 				filesaver.saveAs(blob, fname);
 			}, data_header);
 		}
@@ -584,7 +585,7 @@ class File_save_class {
 
 			var data_json = this.export_as_json();
 
-			var blob = new Blob([data_json], {type: "text/plain"});
+			var blob = new Blob([data_json], { type: "text/plain" });
 			//var data = window.URL.createObjectURL(blob); //html5
 			filesaver.saveAs(blob, fname);
 		}
@@ -616,7 +617,7 @@ class File_save_class {
 				}
 				this.Base_layers.convert_layers_to_canvas(ctx, config.layers[i].id, false);
 
-				gif.addFrame(ctx, {copy: true, delay: delay});
+				gif.addFrame(ctx, { copy: true, delay: delay });
 			}
 			gif.render();
 			gif.on('finished', function (blob) {
@@ -624,14 +625,14 @@ class File_save_class {
 			});
 		}
 	}
-	
+
 	fillCanvasBackground(ctx, color, width = config.WIDTH, height = config.HEIGHT) {
 		ctx.beginPath();
 		ctx.rect(0, 0, width, height);
 		ctx.fillStyle = color;
 		ctx.fill();
 	}
-	
+
 	check_format_support(canvas, data_header, show_error) {
 		var data = canvas.toDataURL(data_header);
 		var actualType = data.replace(/^data:([^;]*).*/, '$1');
@@ -645,7 +646,7 @@ class File_save_class {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * exports all layers to JSON
 	 */
@@ -718,7 +719,7 @@ class File_save_class {
 
 		return JSON.stringify(export_data, null, "\t");
 	}
-	
+
 	/**
 	 * removes smoothing, because it look ugly during zoom
 	 * 

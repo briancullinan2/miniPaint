@@ -3,6 +3,8 @@ import Dialog_class from './../../libs/popup.js';
 import Helper_class from './../../libs/helpers.js';
 import Base_layers_class from './../../core/base-layers.js';
 import Tools_settings_class from './../tools/settings.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -24,7 +26,7 @@ class Image_information_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.key.toLowerCase();
 			if (this.Helper.is_input(event.target))
 				return;
@@ -50,14 +52,14 @@ class Image_information_class {
 		var settings = {
 			title: 'Information',
 			params: [
-				{title: "Width:", value: width + ' ' + units},
-				{title: "Height:", value: height + ' ' + units},
-				{title: "Pixels:", value: pixels},
-				{title: "Layers:", value: config.layers.length},
-				{title: "Unique colors:", value: '...'},
+				{ title: "Width:", value: width + ' ' + units },
+				{ title: "Height:", value: height + ' ' + units },
+				{ title: "Pixels:", value: pixels },
+				{ title: "Layers:", value: config.layers.length },
+				{ title: "Unique colors:", value: '...' },
 			],
 		};
-		if(units != 'pixels'){
+		if (units != 'pixels') {
 			settings.params[0].value += " (" + config.WIDTH + " pixels)";
 			settings.params[1].value += " (" + config.HEIGHT + " pixels)";
 		}
@@ -69,7 +71,7 @@ class Image_information_class {
 
 			//show general data
 			for (var i in exif_data.general) {
-				settings.params.push({title: i + ":", value: exif_data.general[i]});
+				settings.params.push({ title: i + ":", value: exif_data.general[i] });
 			}
 
 			//show exif data
@@ -78,8 +80,8 @@ class Image_information_class {
 				if (i == 'undefined')
 					continue;
 				if (n == 0)
-					settings.params.push({title: "==== EXIF ====", value: ''});
-				settings.params.push({title: i + ":", value: exif_data.exif[i]});
+					settings.params.push({ title: "==== EXIF ====", value: '' });
+				settings.params.push({ title: i + ":", value: exif_data.exif[i] });
 				n++;
 			}
 		}

@@ -5,6 +5,7 @@ import Base_gui_class from './../../core/base-gui.js';
 import Helper_class from './../../libs/helpers.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
 import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -26,7 +27,7 @@ class Image_rotate_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -53,8 +54,8 @@ class Image_rotate_class {
 		var settings = {
 			title: 'Rotate',
 			params: [
-				{name: "rotate", title: "Rotate:", value: config.layer.rotate, range: [0, 360]},
-				{name: "right_angle", title: "Right angle:", values: angles},
+				{ name: "rotate", title: "Rotate:", value: config.layer.rotate, range: [0, 360] },
+				{ name: "right_angle", title: "Right angle:", values: angles },
 			],
 			on_change: function (params, canvas_preview, w, h) {
 				_this.rotate_handler(params, false);

@@ -3,6 +3,8 @@ import Helper_class from './../../libs/helpers.js';
 import Base_gui_class from './../../core/base-gui.js';
 import Base_layers_class from './../../core/base-layers.js';
 import Tools_settings_class from './../tools/settings.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -26,12 +28,12 @@ class View_ruler_class {
 	set_events() {
 		var _this = this;
 
-		window.addEventListener('resize', function (event) {
+		GlobalEvents.register(app.Events, window, 'resize', function (event) {
 			//resize
 			_this.prepare_ruler();
 			_this.render_ruler();
 		}, false);
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.code;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -48,7 +50,7 @@ class View_ruler_class {
 		var ruler_top = document.getElementById('ruler_top');
 		var middle_area = document.getElementById('middle_area');
 
-		if(config.ruler_active == false){
+		if (config.ruler_active == false) {
 			//activate
 			config.ruler_active = true;
 			document.getElementById('middle_area').classList.add('has-ruler');
@@ -58,7 +60,7 @@ class View_ruler_class {
 			this.prepare_ruler();
 			this.render_ruler();
 		}
-		else{
+		else {
 			//deactivate
 			config.ruler_active = false;
 			document.getElementById('middle_area').classList.remove('has-ruler');
@@ -71,8 +73,8 @@ class View_ruler_class {
 		config.need_render = true;
 	}
 
-	prepare_ruler(){
-		if(config.ruler_active == false)
+	prepare_ruler() {
+		if (config.ruler_active == false)
 			return;
 
 		var ruler_left = document.getElementById('ruler_left');
@@ -89,8 +91,8 @@ class View_ruler_class {
 		ruler_top.height = 15;
 	}
 
-	render_ruler(){
-		if(config.ruler_active == false)
+	render_ruler() {
+		if (config.ruler_active == false)
 			return;
 
 		var units = this.Tools_settings.get_setting('default_units');
@@ -144,11 +146,11 @@ class View_ruler_class {
 			var global_pos = this.Base_layers.get_world_coords(0, i - begin_y);
 			var value = this.Helper.get_user_unit(global_pos.y, units, resolution);
 
-			if(units == 'inches'){
+			if (units == 'inches') {
 				//more decimals value
 				var text = this.Helper.number_format(value, 1);
 			}
-			else{
+			else {
 				var text = Math.ceil(value);
 			}
 			text = text.toString();
@@ -185,11 +187,11 @@ class View_ruler_class {
 			var global_pos = this.Base_layers.get_world_coords(i - begin_x, 0);
 			var value = this.Helper.get_user_unit(global_pos.x, units, resolution);
 
-			if(units == 'inches'){
+			if (units == 'inches') {
 				//more decimals value
 				var text = this.Helper.number_format(value, 1);
 			}
-			else{
+			else {
 				var text = Math.ceil(value);
 			}
 			text = text.toString();

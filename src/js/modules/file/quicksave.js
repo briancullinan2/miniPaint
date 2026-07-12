@@ -2,6 +2,8 @@ import config from './../../config.js';
 import File_save_class from './save.js';
 import Dialog_class from './../../libs/popup.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 /** 
  * manages files / quick-save
@@ -20,7 +22,7 @@ class File_quicksave_class {
 	set_events() {
 		var _this = this;
 
-		document.addEventListener('keydown', function (event) {
+		GlobalEvents.register(app.Events, document, 'keydown', function (event) {
 			var code = event.keyCode;
 
 			if (code == 120) {

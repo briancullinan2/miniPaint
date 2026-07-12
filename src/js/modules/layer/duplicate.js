@@ -2,6 +2,7 @@ import app from './../../app.js';
 import config from './../../config.js';
 import Base_layers_class from './../../core/base-layers.js';
 import Helper_class from './../../libs/helpers.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -21,7 +22,7 @@ class Layer_duplicate_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -41,16 +42,16 @@ class Layer_duplicate_class {
 
 		//generate name
 		var name_number = params.name.match(/^(.*) #([0-9]+)$/);
-		if(name_number == null){
+		if (name_number == null) {
 			//first duplicate
 			params.name = params.name + " #2";
 		}
-		else{
+		else {
 			//nth duplicate - name like "query #17"
 			params.name = name_number[1] + " #" + (parseInt(name_number[2]) + 1)
 		}
 
-		if(params.x != 0 || params.y != 0 || params.width != config.WIDTH || params.height != config.HEIGHT){
+		if (params.x != 0 || params.y != 0 || params.width != config.WIDTH || params.height != config.HEIGHT) {
 			params.x += 10;
 			params.y += 10;
 		}

@@ -3,6 +3,8 @@ import Base_layers_class from './../../core/base-layers.js';
 import File_save_class from './../file/save.js';
 import Helper_class from './../../libs/helpers.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
+import app from '../../app.js';
+import { GlobalEvents } from "../../global-events.js";
 
 var instance = null;
 
@@ -20,7 +22,7 @@ class Copy_class {
 		this.File_save = new File_save_class();
 
 		//events
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.key.toLowerCase();
 			var ctrlDown = event.ctrlKey || event.metaKey;
 			if (this.Helper.is_input(event.target))
@@ -33,7 +35,7 @@ class Copy_class {
 		}, false);
 	}
 
-	async copy_to_clipboard(){
+	async copy_to_clipboard() {
 		var _this = this;
 
 		const canWriteToClipboard = await this.askWritePermission();
@@ -55,7 +57,7 @@ class Copy_class {
 				_this.setToClipboard(blob);
 			});
 		}
-		else{
+		else {
 			alertify.error('Missing permissions to write to Clipboard.cc');
 		}
 	}

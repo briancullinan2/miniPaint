@@ -6,6 +6,7 @@ import GUI_tools_class from './../core/gui/gui-tools.js';
 import Base_gui_class from './../core/base-gui.js';
 import Base_selection_class from './../core/base-selection.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../global-events.js';
 
 class Crop_class extends Base_tools_class {
 
@@ -82,20 +83,20 @@ class Crop_class extends Base_tools_class {
 
 		var width = mouse.x - mouse.click_x;
 		var height = mouse.y - mouse.click_y;
-		
-		if(e.ctrlKey == true || e.metaKey){
+
+		if (e.ctrlKey == true || e.metaKey) {
 			//ctrl is pressed - crop will be calculated based on global width and height ratio
 			var ratio = config.WIDTH / config.HEIGHT;
 			var width_new = Math.round(height * ratio);
 			var height_new = Math.round(width / ratio);
 
-			if(Math.abs(width * 100 / width_new) > Math.abs(height * 100 / height_new)){
+			if (Math.abs(width * 100 / width_new) > Math.abs(height * 100 / height_new)) {
 				if (width * 100 / width_new > 0)
 					height = height_new;
 				else
 					height = -height_new;
 			}
-			else{
+			else {
 				if (height * 100 / height_new > 0)
 					width = width_new;
 				else
@@ -183,21 +184,21 @@ class Crop_class extends Base_tools_class {
 			alertify.error('Empty selection');
 			return;
 		}
-		
+
 		//check for rotation
 		var rotated_name = false;
 		for (var i in config.layers) {
 			var link = config.layers[i];
 			if (link.type == null)
 				continue;
-			
-			if(link.rotate > 0){
+
+			if (link.rotate > 0) {
 				rotated_name = link.name;
 				break;
 			}
 		}
 		if (rotated_name !== false) {
-			alertify.error('Crop on rotated layer is not supported. Convert it to raster to continue.' + '('+ rotated_name + ')');
+			alertify.error('Crop on rotated layer is not supported. Convert it to raster to continue.' + '(' + rotated_name + ')');
 			return;
 		}
 

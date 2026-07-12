@@ -1,6 +1,8 @@
 import config from './../../config.js';
 import Helper_class from './../../libs/helpers.js';
 import Base_gui_class from './../../core/base-gui.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -20,14 +22,14 @@ class View_grid_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
 
 			if (code == 71 && event.ctrlKey != true && event.metaKey != true) {
 				//G - grid
-				this.grid({visible: !this.GUI.grid});
+				this.grid({ visible: !this.GUI.grid });
 				event.preventDefault();
 			}
 		}, false);

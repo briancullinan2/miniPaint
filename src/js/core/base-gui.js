@@ -3,6 +3,7 @@
  * author: Vilius L.
  */
 
+import app from '../app.js';
 import config from './../config.js';
 import Base_layers_class from './base-layers.js';
 import GUI_tools_class from './gui/gui-tools.js';
@@ -16,8 +17,7 @@ import Tools_translate_class from './../modules/tools/translate.js';
 import Tools_settings_class from './../modules/tools/settings.js';
 import Helper_class from './../libs/helpers.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
-
-var instance = null;
+import { GlobalEvents } from '../global-events.js';
 
 /**
  * Main GUI class
@@ -26,10 +26,10 @@ class Base_gui_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI) {
+			return app.GUI;
 		}
-		instance = this;
+		app.GUI = this;
 
 		this.Helper = new Helper_class();
 		this.Base_layers = new Base_layers_class();
@@ -206,7 +206,7 @@ class Base_gui_class {
 		document.getElementById('mobile_menu_button')?.addEventListener('click', function (event) {
 			document.querySelector('.sidebar_right').classList.toggle('active');
 		});
-		window.addEventListener('resize', function (event) {
+		GlobalEvents.register(app.Events, window, 'resize', function (event) {
 			//resize
 			_this.prepare_canvas();
 			config.need_render = true;
@@ -215,7 +215,7 @@ class Base_gui_class {
 
 		//confirmation on exit
 		var exit_confirm = this.Tools_settings.get_setting('exit_confirm');
-		window.addEventListener('beforeunload', function (e) {
+		GlobalEvents.register(app.Events, window, 'beforeunload', function (e) {
 			if (exit_confirm && (config.layers.length > 1 || _this.Base_layers.is_layer_empty(config.layer.id) == false)) {
 				e.preventDefault();
 				e.returnValue = '';

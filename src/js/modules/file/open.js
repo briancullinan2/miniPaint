@@ -9,6 +9,7 @@ import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.j
 import EXIF from './../../../../node_modules/exif-js/exif.js';
 import GUI_tools_class from "../../core/gui/gui-tools";
 import semver_compare from './../../../../node_modules/semver-compare/';
+import { GlobalEvents } from '../../global-events.js';
 
 var instance = null;
 
@@ -54,7 +55,7 @@ class File_open_class {
 		window.ondragover = function (e) {
 			e.preventDefault();
 		};
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.key.toLowerCase();
 			if (this.Helper.is_input(event.target))
 				return;
@@ -96,42 +97,42 @@ class File_open_class {
 		//force click
 		document.querySelector('#file_open').click();
 	}
-	
-	open_webcam(){
+
+	open_webcam() {
 		var _this = this;
 		var video = document.createElement('video');
 		video.autoplay = true;
 		video.style.maxWidth = '100%';
 		var track = null;
-		
-		function handleSuccess(stream) {	
+
+		function handleSuccess(stream) {
 			track = stream.getTracks()[0];
-			video.srcObject = stream;	
+			video.srcObject = stream;
 		}
 
 		function handleError(error) {
 			alertify.error('Sorry, cold not load getUserMedia() data: ' + error);
 		}
-		
+
 		var settings = {
 			title: 'Webcam',
 			params: [
-				{title: "Stream:", html: '<div id="webcam_container"></div>'},
+				{ title: "Stream:", html: '<div id="webcam_container"></div>' },
 			],
-			on_load: function(params){
+			on_load: function (params) {
 				document.getElementById('webcam_container').appendChild(video);
 			},
-			on_finish: function(params){
+			on_finish: function (params) {
 				//capture data
 				var width = video.videoWidth;
 				var height = video.videoHeight;
-				
+
 				var tmpCanvas = document.createElement('canvas');
 				var tmpCanvasCtx = tmpCanvas.getContext("2d");
 				tmpCanvas.width = width;
 				tmpCanvas.height = height;
 				tmpCanvasCtx.drawImage(video, 0, 0);
-				
+
 				//create requested layer
 				var new_layer = {
 					name: "Webcam #" + _this.Base_layers.auto_increment,
@@ -148,17 +149,17 @@ class File_open_class {
 						new app.Actions.Autoresize_canvas_action(width, height, null, true, true)
 					])
 				);
-				
+
 				//destroy
-				if(track != null){
+				if (track != null) {
 					track.stop();
 				}
 				video.pause();
 				video.src = "";
 				video.load();
 			},
-			on_cancel: function(params){
-				if(track != null){
+			on_cancel: function (params) {
+				if (track != null) {
 					track.stop();
 				}
 				video.pause();
@@ -167,8 +168,8 @@ class File_open_class {
 			},
 		};
 		this.POP.show(settings);
-		
-		navigator.mediaDevices.getUserMedia({audio: false, video: true})
+
+		navigator.mediaDevices.getUserMedia({ audio: false, video: true })
 			.then(handleSuccess)
 			.catch(handleError);
 	}
@@ -201,7 +202,7 @@ class File_open_class {
 		var settings = {
 			title: 'Open data URL',
 			params: [
-				{name: "data", title: "Data URL:", type: "textarea", value: ""},
+				{ name: "data", title: "Data URL:", type: "textarea", value: "" },
 			],
 			on_finish: function (params) {
 				_this.file_open_data_url_handler(params.data);
@@ -249,7 +250,7 @@ class File_open_class {
 		var settings = {
 			title: 'Open URL',
 			params: [
-				{name: "url", title: "URL:", value: ""},
+				{ name: "url", title: "URL:", value: "" },
 			],
 			on_finish: function (params) {
 				_this.file_open_url_handler(params);
@@ -282,11 +283,11 @@ class File_open_class {
 
 		//check if dropped directory
 		var dir_opened = false;
-		if (e.dataTransfer && e.dataTransfer.items)	{
+		if (e.dataTransfer && e.dataTransfer.items) {
 			var items = e.dataTransfer.items;
-			for (var i=0; i<items.length; i++) {
+			for (var i = 0; i < items.length; i++) {
 				var item = items[i].webkitGetAsEntry();
-				if(item && item.isDirectory){
+				if (item && item.isDirectory) {
 					dir_opened = true;
 				}
 			}
@@ -295,7 +296,7 @@ class File_open_class {
 		for (var i = 0, f; i < files.length; i++) {
 			f = files[i];
 			if (!f.type.match('image.*') && !f.name.match('.json')) {
-				if(dir_opened == false) {
+				if (dir_opened == false) {
 					alertify.error('Wrong file type, must be image or json.');
 				}
 				continue;
@@ -344,9 +345,9 @@ class File_open_class {
 		}
 
 		//try to open dropped directory
-		if (e.dataTransfer && e.dataTransfer.items)	{
+		if (e.dataTransfer && e.dataTransfer.items) {
 			var items = e.dataTransfer.items;
-			for (var i=0; i<items.length; i++) {
+			for (var i = 0; i < items.length; i++) {
 				var item = items[i].webkitGetAsEntry();
 				if (item && item.isDirectory == true) {
 					this.traverseFileTree(item);
@@ -361,7 +362,7 @@ class File_open_class {
 
 		path = path || "";
 		if (item.isFile) {
-			item.file(async function(file) {
+			item.file(async function (file) {
 				var FR = new FileReader();
 				FR.file = file;
 
@@ -394,24 +395,24 @@ class File_open_class {
 		else if (item.isDirectory) {
 			// Get folder contents
 			var dirReader = item.createReader();
-			dirReader.readEntries(function(entries) {
-				for (var i=0; i<entries.length; i++) {
+			dirReader.readEntries(function (entries) {
+				for (var i = 0; i < entries.length; i++) {
 					_this.traverseFileTree(entries[i], path + item.name + "/");
 				}
 			});
 		}
 	}
-	
-	open_template_test(){
+
+	open_template_test() {
 		var _this = this;
 
 		this.Base_layers.debug_rendering = true;
-		
-		window.fetch("images/test-collection.json").then(function(response) {
+
+		window.fetch("images/test-collection.json").then(function (response) {
 			return response.json();
-		}).then(function(json) {
+		}).then(function (json) {
 			_this.load_json(json, false);
-		}).catch(function(ex) {
+		}).catch(function (ex) {
 			alertify.error('Sorry, image could not be loaded.');
 		});
 	}
@@ -436,17 +437,17 @@ class File_open_class {
 	open_resource(resource_url) {
 		var _this = this;
 
-		if(resource_url.toLowerCase().indexOf('.json') == resource_url.length - 5){
+		if (resource_url.toLowerCase().indexOf('.json') == resource_url.length - 5) {
 			//load json
-			window.fetch(resource_url).then(function(response) {
+			window.fetch(resource_url).then(function (response) {
 				return response.json();
-			}).then(function(json) {
+			}).then(function (json) {
 				_this.load_json(json, false);
-			}).catch(function(ex) {
+			}).catch(function (ex) {
 				alertify.error('Sorry, image could not be loaded.');
 			});
 		}
-		else{
+		else {
 			//load image
 			var data = {
 				url: resource_url,
@@ -494,7 +495,7 @@ class File_open_class {
 
 	async load_json(data) {
 		var json;
-		if(typeof data == 'string')
+		if (typeof data == 'string')
 			json = JSON.parse(data);
 		else
 			json = data;
@@ -503,7 +504,7 @@ class File_open_class {
 		}
 
 		//migration
-		if(semver_compare(json.info.version, '4.0.0') < 0) {
+		if (semver_compare(json.info.version, '4.0.0') < 0) {
 			//convert from v3 to v4
 			for (var i in json.layers) {
 				//layers data
@@ -534,26 +535,26 @@ class File_open_class {
 				);
 			}
 		}
-		if(semver_compare(json.info.version, '4.5.0') < 0) {
+		if (semver_compare(json.info.version, '4.5.0') < 0) {
 			//migrate "rectangle", "circle" and "line" types to "shape"
 			for (var i in json.layers) {
 				var old_type = json.layers[i].type;
 
-				if(old_type == 'line' && json.layers[i].params.type.value == "Arrow"){
+				if (old_type == 'line' && json.layers[i].params.type.value == "Arrow") {
 					//migrate line (type=arrow) to arrow.
 					json.layers[i].type = 'arrow';
 					delete json.layers[i].params.type;
 					json.layers[i].render_function = ["arrow", "render"];
 				}
-				if(old_type == 'rectangle' || old_type == 'circle'){
+				if (old_type == 'rectangle' || old_type == 'circle') {
 					//migrate params
 					json.layers[i].params.border_size = json.layers[i].params.size;
 					delete json.layers[i].params.size;
 
-					if(json.layers[i].params.fill == true) {
+					if (json.layers[i].params.fill == true) {
 						json.layers[i].params.border = false;
 					}
-					else{
+					else {
 						json.layers[i].params.border = true;
 					}
 					json.layers[i].params.border_color = json.layers[i].color;
@@ -561,19 +562,19 @@ class File_open_class {
 
 					json.layers[i].color = null;
 				}
-				if(old_type == 'circle'){
+				if (old_type == 'circle') {
 					//rename circle to ellipse
 					json.layers[i].type = 'ellipse';
 					json.layers[i].render_function = ["ellipse", "render"];
 				}
 			}
 		}
-		if(semver_compare(json.info.version, '4.8.0') < 0) {
+		if (semver_compare(json.info.version, '4.8.0') < 0) {
 			//migrate "borders" layer to rectangle
 			for (var i in json.layers) {
 				var old_type = json.layers[i].type;
 
-				if(old_type == 'borders'){
+				if (old_type == 'borders') {
 					json.layers[i].type = 'rectangle';
 					json.layers[i].name += ' (legacy)';
 					json.layers[i].params = {
@@ -589,17 +590,17 @@ class File_open_class {
 				}
 			}
 		}
-		if(semver_compare(json.info.version, '4.11.0') < 0) {
+		if (semver_compare(json.info.version, '4.11.0') < 0) {
 			//migrate star and star24 objects
 			for (var i in json.layers) {
 				var old_type = json.layers[i].type;
 
-				if(old_type == 'star' && typeof json.layers[i].params.corners == "undefined"){
+				if (old_type == 'star' && typeof json.layers[i].params.corners == "undefined") {
 					json.layers[i].params.corners = 5;
 					json.layers[i].params.inner_radius = 40;
 					json.layers[i].render_function = ["star", "render"];
 				}
-				else if(old_type == 'star24'){
+				else if (old_type == 'star24') {
 					json.layers[i].type = 'star';
 					json.layers[i].params.corners = 24;
 					json.layers[i].params.inner_radius = 80;
@@ -632,9 +633,9 @@ class File_open_class {
 		for (var i in json.layers) {
 			var value = json.layers[i];
 
-			if(value.id > max_id_order)
+			if (value.id > max_id_order)
 				max_id_order = value.id;
-			if(typeof value.order != undefined && value.order > max_id_order)
+			if (typeof value.order != undefined && value.order > max_id_order)
 				max_id_order = value.order;
 
 			if (value.type == 'image') {
@@ -699,7 +700,7 @@ class File_open_class {
 		return exif_data;
 	}
 
-	search(){
+	search() {
 		this.GUI_tools.activate_tool('media');
 	}
 }

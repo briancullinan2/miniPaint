@@ -26,6 +26,7 @@ import File_save_class from './modules/file/save.js';
 import * as Actions from './actions/index.js';
 import menuDefinition from './config-menu.js';
 import alertify from './../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from './global-events.js';
 
 /**
  * Core application initialization sequence.
@@ -48,6 +49,7 @@ export function initializeMiniPaint(targetNode = null) {
 	}
 
 	// Register singletons in app module context boundaries
+	app.Search = Base_search;
 	app.Actions = Actions;
 	app.Config = config;
 	app.FileOpen = File_open;
@@ -58,6 +60,7 @@ export function initializeMiniPaint(targetNode = null) {
 	app.Tools = Base_tools;
 	app.menuDefinition = menuDefinition;
 	app.alertify = alertify;
+	app.destroy = () => GlobalEvents.destroy(app.Events);
 
 	// Render operations
 	GUI.init();

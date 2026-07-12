@@ -4,6 +4,7 @@ import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
 import Helper_class from './../libs/helpers.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../global-events.js';
 
 class Fill_class extends Base_tools_class {
 
@@ -27,12 +28,12 @@ class Fill_class extends Base_tools_class {
 		var _this = this;
 
 		//mouse events
-		document.addEventListener('mousedown', function (event) {
+		GlobalEvents.register(app.Events, document, 'mousedown', function (event) {
 			_this.dragStart(event);
 		});
 
 		// collect touch events
-		document.addEventListener('touchstart', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchstart', function (event) {
 			_this.dragStart(event);
 		});
 	}
@@ -53,7 +54,7 @@ class Fill_class extends Base_tools_class {
 	async fill(mouse) {
 		var params = this.getParams();
 
-		if(this.working == true){
+		if (this.working == true) {
 			return;
 		}
 

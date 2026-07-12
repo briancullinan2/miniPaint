@@ -3,6 +3,8 @@ import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
 import Helper_class from './../libs/helpers.js';
 import Base_gui_class from './../core/base-gui.js';
+import app from '../app.js';
+import { GlobalEvents } from '../global-events.js';
 
 class Pick_color_class extends Base_tools_class {
 
@@ -33,13 +35,13 @@ class Pick_color_class extends Base_tools_class {
 		var _this = this;
 
 		//mouse events
-		document.addEventListener('mousedown', function (event) {
+		GlobalEvents.register(app.Events, document, 'mousedown', function (event) {
 			_this.dragStart(event);
 		});
-		document.addEventListener('mousemove', function (event) {
+		GlobalEvents.register(app.Events, document, 'mousemove', function (event) {
 			_this.dragMove(event);
 		});
-		document.addEventListener('mouseup', function (event) {
+		GlobalEvents.register(app.Events, document, 'mouseup', function (event) {
 			var mouse = _this.get_mouse_info(event);
 			if (config.TOOL.name != _this.name || mouse.click_valid == false)
 				return;
@@ -47,10 +49,10 @@ class Pick_color_class extends Base_tools_class {
 		});
 
 		// collect touch events
-		document.addEventListener('touchstart', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchstart', function (event) {
 			_this.dragStart(event);
 		});
-		document.addEventListener('touchmove', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchmove', function (event) {
 			_this.dragMove(event);
 		});
 	}

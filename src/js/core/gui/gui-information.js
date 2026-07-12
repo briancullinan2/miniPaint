@@ -8,6 +8,8 @@ import Base_layers_class from './../base-layers.js';
 import Tools_settings_class from './../../modules/tools/settings.js';
 import Helper_class from './../../libs/helpers.js';
 import Tools_translate_class from './../../modules/tools/translate.js';
+import app from '../../app.js';
+import { GlobalEvents } from '../../global-events.js';
 
 var template = `
 	<span class="trn label">Size:</span>
@@ -53,7 +55,7 @@ class GUI_information_class {
 
 		//show width and height
 		//should use canvas resize API in future
-		document.addEventListener('mousemove', function (e) {
+		GlobalEvents.register(app.Events, document, 'mousemove', function (e) {
 			_this.show_size();
 		}, false);
 
@@ -70,14 +72,14 @@ class GUI_information_class {
 		}, false);
 	}
 
-	update_units(){
+	update_units() {
 		this.units = this.Tools_settings.get_setting('default_units');
 		this.resolution = this.Tools_settings.get_setting('resolution');
 		this.show_size(true);
 	}
 
 	show_size(force) {
-		if(force == undefined && this.last_width == config.WIDTH && this.last_height == config.HEIGHT) {
+		if (force == undefined && this.last_width == config.WIDTH && this.last_height == config.HEIGHT) {
 			return;
 		}
 

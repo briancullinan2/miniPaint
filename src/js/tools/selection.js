@@ -6,6 +6,7 @@ import Base_selection_class from './../core/base-selection.js';
 import GUI_tools_class from './../core/gui/gui-tools.js';
 import Helper_class from './../libs/helpers.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../global-events.js';
 
 var instance = null;
 
@@ -56,28 +57,28 @@ class Selection_class extends Base_tools_class {
 		var _this = this;
 
 		//mouse events
-		document.addEventListener('mousedown', function (event) {
+		GlobalEvents.register(app.Events, document, 'mousedown', function (event) {
 			_this.dragStart(event);
 		});
-		document.addEventListener('mousemove', function (event) {
+		GlobalEvents.register(app.Events, document, 'mousemove', function (event) {
 			_this.dragMove(event);
 		});
-		document.addEventListener('mouseup', function (event) {
+		GlobalEvents.register(app.Events, document, 'mouseup', function (event) {
 			_this.dragEnd(event);
 		});
 
 		// collect touch events
-		document.addEventListener('touchstart', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchstart', function (event) {
 			_this.dragStart(event);
 		});
-		document.addEventListener('touchmove', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchmove', function (event) {
 			_this.dragMove(event);
 		});
-		document.addEventListener('touchend', function (event) {
+		GlobalEvents.register(app.Events, document, 'touchend', function (event) {
 			_this.dragEnd(event);
 		});
 
-		document.addEventListener('keydown', (e) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (e) => {
 			var code = e.keyCode;
 			if (this.Helper.is_input(e.target))
 				return;
@@ -140,7 +141,7 @@ class Selection_class extends Base_tools_class {
 			&& mouse.y > this.selection.y
 			&& mouse.y < this.selection.y + this.selection.height
 			&& layer.width == layer.width_original && layer.height == layer.height_original
-			) {
+		) {
 			//move
 			this.type = 'move';
 
@@ -161,7 +162,7 @@ class Selection_class extends Base_tools_class {
 				height: 0,
 			};
 			this.type = 'create';
-			this.selection_coords_from = {x: mouse.x, y: mouse.y};
+			this.selection_coords_from = { x: mouse.x, y: mouse.y };
 		}
 	}
 

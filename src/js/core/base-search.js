@@ -6,18 +6,18 @@
 import config from './../config.js';
 import Dialog_class from './../libs/popup.js';
 import Base_gui_class from './base-gui.js';
+import app from '../app.js';
+import { GlobalEvents } from '../global-events.js';
 const fuzzysort = require('fuzzysort');
-
-var instance = null;
 
 class Base_search_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.Search) {
+			return app.Search;
 		}
-		instance = this;
+		app.Search = this;
 
 		this.POP = new Dialog_class();
 		this.Base_gui = new Base_gui_class();
@@ -27,21 +27,21 @@ class Base_search_class {
 	}
 
 	events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			if (this.POP.get_active_instances() > 0) {
 				return;
 			}
 
 			var code = event.key;
-			if (code == "F3" || ( (event.ctrlKey == true || event.metaKey) && code == "f")) {
+			if (code == "F3" || ((event.ctrlKey == true || event.metaKey) && code == "f")) {
 				//open
 				this.search();
 				event.preventDefault();
 			}
 		}, false);
 
-		document.addEventListener('input', (event) => {
-			if(document.querySelector('#pop_data_search') == null){
+		GlobalEvents.register(app.Events, document, 'input', (event) => {
+			if (document.querySelector('#pop_data_search') == null) {
 				return;
 			}
 
@@ -49,7 +49,7 @@ class Base_search_class {
 			node.innerHTML = '';
 
 			var query = event.target.value;
-			if(query == ''){
+			if (query == '') {
 				return;
 			}
 
@@ -60,23 +60,23 @@ class Base_search_class {
 			});
 
 			//show
-			for(var i = 0; i < results.length; i++) {
+			for (var i = 0; i < results.length; i++) {
 				var item = results[i];
 
-				var className = "search-result n" + (i+1);
-				if(i == 0){
+				var className = "search-result n" + (i + 1);
+				if (i == 0) {
 					className += " active";
 				}
 
-				node.innerHTML += "<div class='"+className+"' data-key='"+item.obj.key+"'>"
+				node.innerHTML += "<div class='" + className + "' data-key='" + item.obj.key + "'>"
 					+ fuzzysort.highlight(item[0]) + "</div>";
 			}
 		}, false);
 
 		//allow to select with arrow keys
-		document.addEventListener('keydown', function (e) {
-			if(document.querySelector('#global_search_results') == null
-				|| document.querySelector('.search-result') == null){
+		GlobalEvents.register(app.Events, document, 'keydown', function (e) {
+			if (document.querySelector('#global_search_results') == null
+				|| document.querySelector('.search-result') == null) {
 				return;
 			}
 			var k = e.key;
@@ -84,11 +84,11 @@ class Base_search_class {
 			if (k == "ArrowUp") {
 				var target = document.querySelector('.search-result.active');
 				var index = Array.from(target.parentNode.children).indexOf(target);
-				if(index > 0){
+				if (index > 0) {
 					index--;
 				}
 				target.classList.remove('active');
-				var target2 =document.querySelector('#global_search_results').childNodes[index];
+				var target2 = document.querySelector('#global_search_results').childNodes[index];
 				target2.classList.add('active');
 				e.preventDefault();
 			}
@@ -96,7 +96,7 @@ class Base_search_class {
 				var target = document.querySelector('.search-result.active');
 				var index = Array.from(target.parentNode.children).indexOf(target);
 				var total = target.parentNode.childElementCount;
-				if(index < total - 1){
+				if (index < total - 1) {
 					index++;
 				}
 				target.classList.remove('active');
@@ -112,9 +112,9 @@ class Base_search_class {
 		var _this = this;
 
 		//init DB
-		if(this.db === null) {
+		if (this.db === null) {
 			this.db = Object.keys(this.Base_gui.modules);
-			for(var i in this.db){
+			for (var i in this.db) {
 				this.db[i] = {
 					key: this.db[i],
 					title: this.db[i].replace(/_/i, ' '),
@@ -125,7 +125,7 @@ class Base_search_class {
 		var settings = {
 			title: 'Search',
 			params: [
-				{name: "search", title: "Search:", value: ""},
+				{ name: "search", title: "Search:", value: "" },
 			],
 			on_load: function (params, popup) {
 				var node = document.createElement("div");
@@ -136,7 +136,7 @@ class Base_search_class {
 			on_finish: function (params) {
 				//execute
 				var target = document.querySelector('.search-result.active');
-				if(target){
+				if (target) {
 					//execute
 					var key = target.dataset.key;
 					var class_object = this.Base_gui.modules[key];
@@ -153,7 +153,7 @@ class Base_search_class {
 		document.getElementById("pop_data_search").select();
 	}
 
-	get_function_from_path(path){
+	get_function_from_path(path) {
 		var parts = path.split("/");
 		var result = parts[parts.length - 1];
 		result = result.replace(/-/, '_');

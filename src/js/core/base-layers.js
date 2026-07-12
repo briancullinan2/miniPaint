@@ -13,8 +13,7 @@ import zoomView from "./../libs/zoomView.js";
 import Helper_class from "./../libs/helpers.js";
 import alertify from "./../../../node_modules/alertifyjs/build/alertify.min.js";
 import { FrameRater } from "../frame-rater.js";
-
-var instance = null;
+import { GlobalEvents } from "../global-events.js";
 
 /**
  * Layers class - manages layers. Each layer is object with various types. Keys:
@@ -46,10 +45,10 @@ var instance = null;
 class Base_layers_class {
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.Layers) {
+			return app.Layers;
 		}
-		instance = this;
+		app.Layers = this;
 
 		this.Base_gui = new Base_gui_class();
 		this.Helper = new Helper_class();

@@ -6,6 +6,7 @@ import Base_selection_class from './../../core/base-selection.js';
 import Selection_class from './../../tools/selection.js';
 import Helper_class from './../../libs/helpers.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
+import { GlobalEvents } from '../../global-events.js';
 
 class Layer_new_class {
 
@@ -20,7 +21,7 @@ class Layer_new_class {
 	}
 
 	set_events() {
-		document.addEventListener('keydown', (event) => {
+		GlobalEvents.register(app.Events, document, 'keydown', (event) => {
 			var code = event.keyCode;
 			if (this.Helper.is_input(event.target))
 				return;
@@ -54,20 +55,20 @@ class Layer_new_class {
 		//if image was stretched
 		var width_ratio = (layer.width / layer.width_original);
 		var height_ratio = (layer.height / layer.height_original);
-		
+
 		var left = selection.x - layer.x;
 		var top = selection.y - layer.y;
-		
+
 		//adapt to origin size
 		selection.width = selection.width / width_ratio;
 		selection.height = selection.height / height_ratio;
-		
+
 		//create new layer
 		var canvas = document.createElement('canvas');
 		var ctx = canvas.getContext("2d");
 		canvas.width = Math.round(selection.width);
 		canvas.height = Math.round(selection.height);
-		
+
 		ctx.translate(-left / width_ratio, -top / height_ratio);
 		ctx.drawImage(config.layer.link, 0, 0);
 		ctx.translate(0, 0);

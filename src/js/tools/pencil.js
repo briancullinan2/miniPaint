@@ -2,6 +2,7 @@ import app from './../app.js';
 import config from './../config.js';
 import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
+import { GlobalEvents } from '../global-events.js';
 
 class Pencil_class extends Base_tools_class {
 
@@ -19,10 +20,10 @@ class Pencil_class extends Base_tools_class {
 		var _this = this;
 
 		//pointer events
-		document.addEventListener('pointerdown', function (event) {
+		GlobalEvents.register(app.Events, document, 'pointerdown', function (event) {
 			_this.pointerdown(event);
 		});
-		document.addEventListener('pointermove', function (event) {
+		GlobalEvents.register(app.Events, document, 'pointermove', function (event) {
 			_this.pointermove(event);
 		});
 
@@ -61,7 +62,7 @@ class Pencil_class extends Base_tools_class {
 
 		var params_hash = this.get_params_hash();
 		var opacity = Math.round(config.ALPHA / 255 * 100);
-		
+
 		if (config.layer.type != this.name || params_hash != this.params_hash) {
 			//register new object - current layer is not ours or params changed
 			this.layer = {
@@ -159,7 +160,7 @@ class Pencil_class extends Base_tools_class {
 	render(ctx, layer) {
 		this.render_aliased(ctx, layer);
 	}
-	
+
 	/**
 	 * draw without antialiasing, sharp, ugly mode.
 	 *
@@ -191,7 +192,7 @@ class Pencil_class extends Base_tools_class {
 			else {
 				//line
 				size = data[i][2];
-				if(size == undefined){
+				if (size == undefined) {
 					size = 1;
 				}
 
@@ -260,7 +261,7 @@ class Pencil_class extends Base_tools_class {
 	 * recalculate layer x, y, width and height values.
 	 */
 	check_dimensions() {
-		if(config.layer.data.length == 0)
+		if (config.layer.data.length == 0)
 			return;
 
 		//find bounds
@@ -269,8 +270,8 @@ class Pencil_class extends Base_tools_class {
 		var min_y = data[0][1];
 		var max_x = data[0][0];
 		var max_y = data[0][1];
-		for(var i in data){
-			if(data[i] === null)
+		for (var i in data) {
+			if (data[i] === null)
 				continue;
 			min_x = Math.min(min_x, data[i][0]);
 			min_y = Math.min(min_y, data[i][1]);
@@ -279,8 +280,8 @@ class Pencil_class extends Base_tools_class {
 		}
 
 		//move current data
-		for(var i in data){
-			if(data[i] === null)
+		for (var i in data) {
+			if (data[i] === null)
 				continue;
 			data[i][0] = data[i][0] - min_x;
 			data[i][1] = data[i][1] - min_y;
