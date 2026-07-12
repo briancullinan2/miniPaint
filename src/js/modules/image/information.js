@@ -6,16 +6,14 @@ import Tools_settings_class from './../tools/settings.js';
 import app from '../../app.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
-
 class Image_information_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.information) {
+			return app.information;
 		}
-		instance = this;
+		app.GUI.information = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.POP = new Dialog_class();

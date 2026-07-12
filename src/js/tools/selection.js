@@ -8,7 +8,6 @@ import Helper_class from './../libs/helpers.js';
 import alertify from './../../../node_modules/alertifyjs/build/alertify.min.js';
 import { GlobalEvents } from '../global-events.js';
 
-var instance = null;
 
 class Selection_class extends Base_tools_class {
 
@@ -16,10 +15,10 @@ class Selection_class extends Base_tools_class {
 		super();
 
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.selection) {
+			return app.GUI.selection;
 		}
-		instance = this;
+		app.GUI.selection = this;
 
 		var _this = this;
 

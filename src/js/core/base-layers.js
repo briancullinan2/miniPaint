@@ -43,12 +43,16 @@ import { GlobalEvents } from "../global-events.js";
  * - render_function (function)
  */
 class Base_layers_class {
+	static registry = [];
+
+
 	constructor() {
 		//singleton
 		if (app.Layers) {
 			return app.Layers;
 		}
 		app.Layers = this;
+		Base_layers_class.registry[Base_layers_class.registry.length] = this;
 
 		this.Base_gui = new Base_gui_class();
 		this.Helper = new Helper_class();
@@ -96,7 +100,10 @@ class Base_layers_class {
 		const fps = this.Base_gui.Tools_settings.get_setting('max_fps');
 		this.frameLimiter = new FrameRater(fps,
 			(e, t, frame) => {
-				that.render(e);
+				for (let layer of Base_layers_class.registry) {
+					if (!layer) continue;
+					layer.render(e);
+				}
 			});
 		FrameRater.requestFrameUpdate(true);
 	}

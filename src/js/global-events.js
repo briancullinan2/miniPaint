@@ -3,6 +3,8 @@
  * Prevents memory leaks by tracking context associations across global targets.
  */
 import app from "./app";
+import config from "./config";
+import Base_layers_class from "./core/base-layers";
 
 class GlobalEventRegistry {
     constructor() {
@@ -56,7 +58,10 @@ class GlobalEventRegistry {
         }
 
         this._records.delete(context);
-
+        const index = Base_layers_class.registry.indexOf(app.Layers);
+        if (index !== -1) {
+            Base_layers_class.registry.splice(index, 1); // Removes exactly 1 item at that index position
+        }
         app.GUI = null;
         app.Tools = null;
         app.Layers = null;
@@ -67,6 +72,7 @@ class GlobalEventRegistry {
         app.Actions = null;
         app.Events = null;
         app.Search = null;
+        config.deepPurgeObject(config);
     }
 }
 
