@@ -32,10 +32,10 @@ class GUI_preview_class {
 
 	constructor(GUI_class) {
 		//singleton
-		if (GUI_class.GUI_preview) {
-			return GUI_class.GUI_preview;
+		if (app.GUI && app.GUI.GUI_preview) {
+			return app.GUI.GUI_preview;
 		}
-		GUI_class.GUI_preview = this;
+		app.GUI.GUI_preview = this;
 		document.getElementById('toggle_preview').innerHTML = template;
 
 		// preview mini window size on right sidebar

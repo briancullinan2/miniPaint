@@ -18,10 +18,10 @@ class GUI_tools_class {
 
 	constructor(GUI_class) {
 		//singleton
-		if (GUI_class.GUI_tools) {
-			return GUI_class.GUI_tools;
+		if (app.GUI && app.GUI.GUI_tools) {
+			return app.GUI.GUI_tools;
 		}
-		GUI_class.GUI_tools = this;
+		app.GUI.GUI_tools = this;
 
 		this.Helper = new Helper_class();
 		this.Tools_translate = new Tools_translate_class();

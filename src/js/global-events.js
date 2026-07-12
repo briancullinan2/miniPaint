@@ -56,9 +56,19 @@ class GlobalEventRegistry {
         }
 
         this._records.delete(context);
+
+        app.GUI = null;
+        app.Tools = null;
+        app.Layers = null;
+        app.Config = null;
+        app.State = null;
+        app.FileOpen = null;
+        app.FileSave = null;
+        app.Actions = null;
+        app.Events = null;
+        app.Search = null;
     }
 }
 
 // Freeze and export a single unified instance across your workspace engine
-app.Events = {};
 export const GlobalEvents = new GlobalEventRegistry();

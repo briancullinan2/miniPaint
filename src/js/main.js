@@ -34,6 +34,7 @@ import { GlobalEvents } from './global-events.js';
  * @param {HTMLElement} [targetNode] - Optional custom DOM mount point inside a Lumino Widget container
  */
 export function initializeMiniPaint(targetNode = null) {
+	app.Events = {};
 
 	let Layers = new Base_layers_class();
 	let Base_tools = new Base_tools_class(true);
