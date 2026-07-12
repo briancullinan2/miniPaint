@@ -6,7 +6,6 @@ import Dialog_class from './../libs/popup.js';
 import GUI_tools_class from './../core/gui/gui-tools.js';
 import { GlobalEvents } from '../global-events.js';
 
-var instance = null;
 
 class Shape_class extends Base_tools_class {
 
@@ -14,10 +13,10 @@ class Shape_class extends Base_tools_class {
 		super();
 
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Shape) {
+			return app.GUI.Shape;
 		}
-		instance = this;
+		app.GUI.Shape = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.GUI_tools = new GUI_tools_class();

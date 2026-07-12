@@ -7,16 +7,15 @@ import Helper_class from './../../libs/helpers.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class Image_trim_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Image_trim) {
+			return app.GUI.Image_trim;
 		}
-		instance = this;
+		app.GUI.Image_trim = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Base_gui = new Base_gui_class();

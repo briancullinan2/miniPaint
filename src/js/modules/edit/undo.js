@@ -1,15 +1,15 @@
+import app from '../../app.js';
 import Base_state_class from './../../core/base-state.js';
 
-var instance = null;
 
 class Edit_undo_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Edit_undo) {
+			return app.GUI.Edit_undo;
 		}
-		instance = this;
+		app.GUI.Edit_undo = this;
 
 		this.Base_state = new Base_state_class();
 		this.events();

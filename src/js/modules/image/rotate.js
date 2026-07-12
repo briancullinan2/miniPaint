@@ -7,16 +7,15 @@ import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.j
 import app from '../../app.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class Image_rotate_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Image_rotate) {
+			return app.GUI.Image_rotate;
 		}
-		instance = this;
+		app.GUI.Image_rotate = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Base_gui = new Base_gui_class();

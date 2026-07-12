@@ -11,7 +11,6 @@ import GUI_tools_class from "../../core/gui/gui-tools";
 import semver_compare from './../../../../node_modules/semver-compare/';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 /** 
  * manages files / open
@@ -22,10 +21,10 @@ class File_open_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.File_open) {
+			return app.GUI.File_open;
 		}
-		instance = this;
+		app.GUI.File_open = this;
 
 		var _this = this;
 		this.POP = new Dialog_class();

@@ -6,16 +6,15 @@ import Helper_class from './../../libs/helpers.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class Image_autoAdjust_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Image_auto) {
+			return app.GUI.Image_auto;
 		}
-		instance = this;
+		app.GUI.Image_auto = this;
 
 		this.POP = new Dialog_class();
 		this.Base_layers = new Base_layers_class();

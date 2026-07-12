@@ -4,16 +4,15 @@ import Base_layers_class from './../../core/base-layers.js';
 import Helper_class from './../../libs/helpers.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class Layer_duplicate_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Layer_duplicate) {
+			return app.GUI.Layer_duplicate;
 		}
-		instance = this;
+		app.GUI.Layer_duplicate = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Helper = new Helper_class();

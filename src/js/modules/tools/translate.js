@@ -1,18 +1,18 @@
+import app from '../../app.js';
 import config from './../../config.js';
 import Helper_class from './../../libs/helpers.js';
 import Translate_class from './../../libs/jquery.translate.js';
 import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.js';
 
-var instance = null;
 
 class Tools_translate_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Tools_translate) {
+			return app.GUI.Tools_translate;
 		}
-		instance = this;
+		app.GUI.Tools_translate = this;
 
 		this.Helper = new Helper_class();
 		this.translations = {};
@@ -37,7 +37,7 @@ class Tools_translate_class {
 
 		if (this.trans_lang_codes.includes(lang_code) || lang_code == 'en') {
 			//translate
-			$(element || 'body').translate({lang: lang_code, t: this.translations});
+			$(element || 'body').translate({ lang: lang_code, t: this.translations });
 			config.LANG = lang_code;
 		}
 		else {
@@ -52,10 +52,10 @@ class Tools_translate_class {
 			if (key.indexOf('Base' + '/') < 0 && key.indexOf('empty') < 0) {
 				var moduleKey = key.replace('./', '').replace('.json', '');
 				var classObj = modules_context(key);
-				
-				for(var i in classObj){
-					if(_this.translations[i] == undefined){
-						_this.translations[i] =	{
+
+				for (var i in classObj) {
+					if (_this.translations[i] == undefined) {
+						_this.translations[i] = {
 							en: i,
 						};
 					}

@@ -6,16 +6,15 @@ import Tools_settings_class from './../tools/settings.js';
 import app from '../../app.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class View_ruler_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.View_ruler) {
+			return app.GUI.View_ruler;
 		}
-		instance = this;
+		app.GUI.View_ruler = this;
 
 		this.GUI = new Base_gui_class();
 		this.Base_layers = new Base_layers_class();

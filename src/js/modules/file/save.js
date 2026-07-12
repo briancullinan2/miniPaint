@@ -11,7 +11,6 @@ import CanvasToTIFF from './../../libs/canvastotiff.js';
 import Tools_settings_class from "../tools/settings";
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 /** 
  * manages files / save
@@ -22,10 +21,10 @@ class File_save_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.File_save) {
+			return app.GUI.File_save;
 		}
-		instance = this;
+		app.GUI.File_save = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Helper = new Helper_class();

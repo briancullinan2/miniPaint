@@ -1,19 +1,18 @@
+import app from '../../app.js';
 import config from './../../config.js';
 import Helper_class from './../../libs/helpers.js';
 import Base_gui_class from './../../core/base-gui.js';
-import app from '../../app.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class View_grid_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.View_grid) {
+			return app.GUI.View_grid;
 		}
-		instance = this;
+		app.GUI.View_grid = this;
 
 		this.GUI = new Base_gui_class();
 		this.Helper = new Helper_class();

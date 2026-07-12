@@ -6,16 +6,15 @@ import alertify from './../../../../node_modules/alertifyjs/build/alertify.min.j
 import app from '../../app.js';
 import { GlobalEvents } from "../../global-events.js";
 
-var instance = null;
 
 class Copy_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Copy) {
+			return app.GUI.Copy;
 		}
-		instance = this;
+		app.GUI.Copy = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Helper = new Helper_class();

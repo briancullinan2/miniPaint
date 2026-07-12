@@ -12,6 +12,7 @@ class GlobalEventRegistry {
             return GlobalEventRegistry.instance;
         }
         this._records = new Map();
+        this._inactive = new Map();
         GlobalEventRegistry.instance = this;
     }
 
@@ -41,6 +42,36 @@ class GlobalEventRegistry {
             handler,
             options: normalizedOptions
         });
+    }
+
+    activate(context) {
+        if (!context || !this._records.has(context)) return;
+
+        if (!this._inactive.has(context)) {
+            this._inactive.set(context, []);
+        }
+
+        const listeners = this._inactive.get(context);
+        for (let { target, type, handler, options } of listeners) {
+            this.register(context, target, type, handler, options);
+        }
+
+        this._inactive.set(context, listeners);
+    }
+
+    deActivate(context) {
+        if (!context || !this._records.has(context)) return;
+
+        if (!this._inactive.has(context)) {
+            this._inactive.set(context, []);
+        }
+
+        const listeners = this._records.get(context);
+        for (let { target, type, handler, options } of listeners) {
+            target.removeEventListener(type, handler, options);
+        }
+
+        this._inactive.delete(context);
     }
 
     /**

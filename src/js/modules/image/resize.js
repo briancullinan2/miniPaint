@@ -12,16 +12,15 @@ import Tools_settings_class from './../tools/settings.js';
 import { metaDefaults as textMetaDefaults } from '../../tools/text.js';
 import { GlobalEvents } from '../../global-events.js';
 
-var instance = null;
 
 class Image_resize_class {
 
 	constructor() {
 		//singleton
-		if (instance) {
-			return instance;
+		if (app.GUI && app.GUI.Image_resize) {
+			return app.GUI.Image_resize;
 		}
-		instance = this;
+		app.GUI.Image_resize = this;
 
 		this.Base_layers = new Base_layers_class();
 		this.Base_gui = new Base_gui_class();

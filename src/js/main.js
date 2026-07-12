@@ -35,6 +35,11 @@ import { GlobalEvents } from './global-events.js';
  */
 export function initializeMiniPaint(targetNode = null) {
 	app.Events = {};
+	app.Events.register = GlobalEvents.register.bind(GlobalEvents, app.Events);
+	app.Events.activate = GlobalEvents.activate.bind(GlobalEvents, app.Events);
+	app.Events.deActivate = GlobalEvents.deActivate.bind(GlobalEvents, app.Events);
+	app.Events.destroy = GlobalEvents.destroy.bind(GlobalEvents, app.Events);
+
 
 	let Layers = new Base_layers_class();
 	let Base_tools = new Base_tools_class(true);
@@ -61,7 +66,7 @@ export function initializeMiniPaint(targetNode = null) {
 	app.Tools = Base_tools;
 	app.menuDefinition = menuDefinition;
 	app.alertify = alertify;
-	app.destroy = () => GlobalEvents.destroy(app.Events);
+
 
 	// Render operations
 	GUI.init();
