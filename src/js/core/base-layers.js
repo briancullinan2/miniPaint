@@ -12,6 +12,7 @@ import View_ruler_class from "./../modules/view/ruler.js";
 import zoomView from "./../libs/zoomView.js";
 import Helper_class from "./../libs/helpers.js";
 import alertify from "./../../../node_modules/alertifyjs/build/alertify.min.js";
+import { FrameRater } from "../frame-rater.js";
 
 var instance = null;
 
@@ -92,7 +93,13 @@ class Base_layers_class {
 			"main"
 		);
 
-		this.render(true);
+		const that = this;
+		const fps = this.Base_gui.Tools_settings.get_setting('max_fps');
+		this.frameLimiter = new FrameRater(fps,
+			(e, t, frame) => {
+				that.render(e);
+			});
+		FrameRater.requestFrameUpdate(true);
 	}
 
 	init_zoom_lib() {
@@ -176,7 +183,7 @@ class Base_layers_class {
 				config.HEIGHT
 			);
 
-			this.render_objects(this.ctx, newCanvas, layers_sorted, ()=>{
+			this.render_objects(this.ctx, newCanvas, layers_sorted, () => {
 				this.ctx.save();
 			});
 
@@ -208,9 +215,7 @@ class Base_layers_class {
 			}
 		}
 
-		requestAnimationFrame(function () {
-			_this.render(force);
-		});
+		FrameRater.requestFrameUpdate(force);
 	}
 
 	render_overlay() {
@@ -219,7 +224,7 @@ class Base_layers_class {
 
 		if (
 			typeof this.Base_gui.GUI_tools.tools_modules[render_class].object[
-				render_function
+			render_function
 			] != "undefined"
 		) {
 			this.Base_gui.GUI_tools.tools_modules[render_class].object[
@@ -243,17 +248,17 @@ class Base_layers_class {
 	 */
 	create_new_canvas(ctx, width, height) {
 		const newCanvas = document.createElement("canvas");
-		if(width){
+		if (width) {
 			newCanvas.width = width;
 		}
-		else{
+		else {
 			newCanvas.width = ctx.canvas.width;
 		}
 
-		if(height){
+		if (height) {
 			newCanvas.height = height;
 		}
-		else{
+		else {
 			newCanvas.height = ctx.canvas.height;
 		}
 
@@ -279,14 +284,14 @@ class Base_layers_class {
 		const tempCtx = tempCanvas.getContext("2d");
 		// Prepare the temporary canvas if needed
 		prepare && prepare();
-		
+
 		for (var i = layers.length - 1; i >= 0; i--) {
 			var layer = layers[i];
 			const nextLayer = layers[i - 1];
 
 			// If the previous layer has clip masking effect and the current one is not the other end of the pair,
 			// then render the temporary canvas for clip masking on top of the current.
-			
+
 			// Skip the layer if not needed to be rendered
 			if (shouldSkip && shouldSkip(layer)) {
 				continue;
@@ -320,12 +325,12 @@ class Base_layers_class {
 					// If we are in this condition, then it means this is the last layer of clipped layers pair.
 					// Render clipped layers on the temporary canvas
 					this.render_object(tempCtx, layer);
-					
+
 					// Render the clipped layers on top of the current canvas
 					ctx.restore();
 					ctx.drawImage(tempCanvas, 0, 0);
 
-					
+
 					// Prepare canvas to since we called restore
 					prepare && prepare();
 					// Clear temporary canvas 
@@ -740,7 +745,7 @@ class Base_layers_class {
 	convert_layers_to_canvas(ctx, layer_id = null, is_preview = true) {
 		const newCanvas = this.create_new_canvas(ctx);
 		const layers_sorted = this.get_sorted_layers();
-		this.render_objects(ctx, newCanvas, layers_sorted, ()=>{
+		this.render_objects(ctx, newCanvas, layers_sorted, () => {
 			ctx.save();
 		}, (value) => {
 			if (value.visible == false || value.type == null) {

@@ -2,6 +2,7 @@ import config from './../../config.js';
 import Dialog_class from './../../libs/popup.js';
 import Helper_class from './../../libs/helpers.js';
 import Base_gui_class from './../../core/base-gui.js';
+import { FrameRater } from '../../frame-rater.js';
 
 class Tools_settings_class {
 
@@ -33,23 +34,29 @@ class Tools_settings_class {
 		var resolution = this.get_setting('resolution');
 		var thick_guides = this.get_setting('thick_guides');
 		var enable_autoresize = this.get_setting('enable_autoresize');
+		var max_fps = this.get_setting('max_fps');
 
 		var settings = {
 			title: 'Settings',
 			params: [
-				{name: "transparency", title: "Transparent:", value: transparency},
-				{name: "transparency_type", title: "Transparency background:", type: "select",
-					value: config.TRANSPARENCY_TYPE, values: transparency_values},
-				{name: "theme", title: "Theme", values: config.themes, value: theme, type: "select"},
-				{name: "default_units", title: "Units", values: default_units_all, value: default_units, type: "select"},
-				{name: "resolution", title: "Resolution:", type: "select",
-					value: resolution, values: resolutions_values},
-				{name: "snap", title: "Enable snap:", value: snap},
-				{name: "guides", title: "Enable guides:", value: guides},
-				{name: "safe_search", title: "Safe search:", value: safe_search},
-				{name: "exit_confirm", title: "Exit confirmation:", value: exit_confirm},
-				{name: "thick_guides", title: "Thick guides:", value: thick_guides},
-				{name: "enable_autoresize", title: "Enable autoresize:", value: enable_autoresize},
+				{ name: "transparency", title: "Transparent:", value: transparency },
+				{
+					name: "transparency_type", title: "Transparency background:", type: "select",
+					value: config.TRANSPARENCY_TYPE, values: transparency_values
+				},
+				{ name: "theme", title: "Theme", values: config.themes, value: theme, type: "select" },
+				{ name: "default_units", title: "Units", values: default_units_all, value: default_units, type: "select" },
+				{
+					name: "resolution", title: "Resolution:", type: "select",
+					value: resolution, values: resolutions_values
+				},
+				{ name: "snap", title: "Enable snap:", value: snap },
+				{ name: "guides", title: "Enable guides:", value: guides },
+				{ name: "safe_search", title: "Safe search:", value: safe_search },
+				{ name: "exit_confirm", title: "Exit confirmation:", value: exit_confirm },
+				{ name: "thick_guides", title: "Thick guides:", value: thick_guides },
+				{ name: "enable_autoresize", title: "Enable autoresize:", value: enable_autoresize },
+				{ name: "max_fps", title: "Max FPS:", value: max_fps },
 			],
 			on_change: function (params) {
 				this.Base_gui.change_theme(params.theme);
@@ -79,6 +86,7 @@ class Tools_settings_class {
 		this.save_setting('resolution', params.resolution);
 		this.save_setting('thick_guides', params.thick_guides);
 		this.save_setting('enable_autoresize', params.enable_autoresize);
+		this.save_setting('max_fps', params.max_fps);
 
 		//update config
 		config.TRANSPARENCY = this.get_setting('transparency');
@@ -87,8 +95,9 @@ class Tools_settings_class {
 		config.guides_enabled = this.get_setting('guides');
 		this.Base_gui.change_theme(this.get_setting('theme'));
 		this.Base_gui.GUI_information.update_units();
-		
+
 		//finish
+		FrameRater._instance?.setTargetFps(params.max_fps);
 		this.Base_gui.prepare_canvas();
 		config.need_render = true;
 	}
@@ -101,10 +110,10 @@ class Tools_settings_class {
 	 */
 	save_setting(key, value) {
 		//prepare
-		if(value === true){
+		if (value === true) {
 			value = 1;
 		}
-		if(value === false){
+		if (value === false) {
 			value = 0;
 		}
 
@@ -130,18 +139,19 @@ class Tools_settings_class {
 			'resolution': 72,
 			'thick_guides': false,
 			'enable_autoresize': config.enable_autoresize_by_default,
+			'max_fps': 59,
 		};
 
 		var value = this.Helper.getCookie(key);
-		if(value == null && default_values[key] != undefined){
+		if (value == null && default_values[key] != undefined) {
 			//set default value
 			value = default_values[key];
 		}
-		if(key == 'safe_search' && config.safe_search_can_be_disabled === false){
+		if (key == 'safe_search' && config.safe_search_can_be_disabled === false) {
 			//not allowed
 			value = 1;
 		}
-		if(key == 'theme' && value == null) {
+		if (key == 'theme' && value == null) {
 			value = config.themes[0];
 			/*if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 				&& config.themes.includes('dark')) {
@@ -156,10 +166,10 @@ class Tools_settings_class {
 		}
 
 		//finalize values
-		if(value === 1){
+		if (value === 1) {
 			value = true;
 		}
-		if(value === 0){
+		if (value === 0) {
 			value = false;
 		}
 
